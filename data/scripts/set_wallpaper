@@ -119,7 +119,7 @@ fi
 # Afterwards, with the command below, Variety will just overwrite the single file there when changing the wallpaper
 # and KDE will refresh it
 # On Plasma 5.7 and above, the wallpaper choosing is automatic.
-if [ "${KDE_FULL_SESSION}" == "true" ]; then
+if [ "$KDE_FULL_SESSION" == "true" ]; then
     # Plasma 5.7 introduced a new feature to set the wallpaper via a qdbus script:
     # https://github.com/KDE/plasma-workspace/commit/903cbfd7e267a4812a6ec222eb7e1b5dd775686f
     if [[ -n "${KDE_SESSION_VERSION}" && "${KDE_SESSION_VERSION}" == '5' ]]; then
@@ -132,7 +132,7 @@ if [ "${KDE_FULL_SESSION}" == "true" ]; then
             qdbus_command=qdbus
         fi
 
-        QT_SELECT=5 $qdbus_command org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+        QT_SELECT=5 "$qdbus_command" org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
         var allDesktops = desktops();
         for (i=0; i < allDesktops.length; i++) {
             d = allDesktops[i];
@@ -157,9 +157,9 @@ if [ "${KDE_FULL_SESSION}" == "true" ]; then
         WALLDIR="$(xdg-user-dir PICTURES)/variety-wallpaper"
         mkdir -p "$WALLDIR"
         # Remove all old wallpapers
-        rm -fv "${WALLDIR}"/*
+        rm -fv "$WALLDIR"/*
 
-        NEWWP="${WALLDIR}/wallpaper-kde-$RANDOM.jpg"
+        NEWWP="$WALLDIR/wallpaper-kde-$RANDOM.jpg"
         cp "$WP" "$NEWWP"
         touch "$NEWWP"
     fi
@@ -190,7 +190,7 @@ fi
 command -v xfconf-query >/dev/null 2>&1
 rc=$?
 if [[ $rc = 0 ]] ; then
-    for i in $(xfconf-query -c xfce4-desktop -p /backdrop -l | grep -E -e "screen.*/monitor.*image-path$" -e "screen.*/monitor.*/last-image$"); do
+    for i in "$(xfconf-query -c xfce4-desktop -p /backdrop -l | grep -E -e "screen.*/monitor.*image-path$" -e "screen.*/monitor.*/last-image$")"; do
         xfconf-query -c xfce4-desktop -p "$i" -n -t string -s "" 2> /dev/null
         xfconf-query -c xfce4-desktop -p "$i" -s "" 2> /dev/null
         xfconf-query -c xfce4-desktop -p "$i" -s "$WP" 2> /dev/null
