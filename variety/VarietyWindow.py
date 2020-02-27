@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 # END LICENSE
-from gi.repository import Gdk, GdkPixbuf, Gio, GObject, Gtk, Notify  # isort:skip
 import logging
 import os
 import random
@@ -29,6 +28,13 @@ import time
 import urllib.parse
 import webbrowser
 
+import gi  # isort:skip
+from gi.repository import Gdk
+from gi.repository import GdkPixbuf
+from gi.repository import Gio
+from gi.repository import GObject
+from gi.repository import Gtk
+from gi.repository import Notify
 from PIL import Image as PILImage
 
 from jumble.Jumble import Jumble
@@ -45,25 +51,25 @@ from variety.plugins.downloaders.SimpleDownloader import SimpleDownloader
 from variety.plugins.IVarietyPlugin import IVarietyPlugin
 from variety.PreferencesVarietyDialog import PreferencesVarietyDialog
 from variety.PrivacyNoticeDialog import PrivacyNoticeDialog
-from variety.profile import (
-    DEFAULT_PROFILE_PATH,
-    get_autostart_file_path,
-    get_desktop_file_name,
-    get_profile_path,
-    get_profile_short_name,
-    get_profile_wm_class,
-    is_default_profile,
-)
+from variety.profile import DEFAULT_PROFILE_PATH
+from variety.profile import get_autostart_file_path
+from variety.profile import get_desktop_file_name
+from variety.profile import get_profile_path
+from variety.profile import get_profile_short_name
+from variety.profile import get_profile_wm_class
+from variety.profile import is_default_profile
 from variety.QuotesEngine import QuotesEngine
 from variety.QuoteWriter import QuoteWriter
 from variety.ThumbsManager import ThumbsManager
-from variety.Util import Util, _, debounce, on_gtk, throttle
+from variety.Util import _
+from variety.Util import debounce
+from variety.Util import on_gtk
+from variety.Util import throttle
+from variety.Util import Util
 from variety.VarietyOptionParser import parse_options
 from variety.WelcomeDialog import WelcomeDialog
 from variety_lib import varietyconfig
-
 # fmt: off
-import gi  # isort:skip
 gi.require_version("Notify", "0.7")
 Notify.init("Variety")
 # fmt: on
