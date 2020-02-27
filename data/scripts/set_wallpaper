@@ -175,13 +175,6 @@ if [ "$(gsettings get org.gnome.desktop.screensaver picture-options)" == "'none'
   gsettings set org.gnome.desktop.screensaver picture-options 'zoom'
 fi
 
-# GNOME Screensaver / Lock screen - thanks to George C. de Araujo for the patch
-gsettings set org.gnome.desktop.screensaver picture-uri "file://$WP" 2> /dev/null
-if [ "$(gsettings get org.gnome.desktop.screensaver picture-options)" == "'none'" ]; then
-    gsettings set org.gnome.desktop.screensaver picture-options 'zoom'
-fi
-
-
 # Deepin
 if [ "$(gsettings list-schemas | grep -c com.deepin.wrap.gnome.desktop.background)" -ge 1 ]; then
   gsettings set com.deepin.wrap.gnome.desktop.background picture-uri "file://$WP"
