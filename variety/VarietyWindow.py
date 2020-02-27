@@ -251,7 +251,8 @@ class VarietyWindow(Gtk.Window):
     def create_preferences_dialog(self):
         if not self.preferences_dialog:
             logger.debug(lambda: "create new preferences_dialog")
-            self.preferences_dialog = PreferencesVarietyDialog(parent=self)  # pylint: disable=E1102
+            self.preferences_dialog = PreferencesVarietyDialog(
+                parent=self)  # pylint: disable=E1102
 
             def _on_preferences_dialog_destroyed(widget, data=None):
                 logger.debug(lambda: "on_preferences_dialog_destroyed")
