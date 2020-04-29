@@ -29,9 +29,8 @@ import time
 import urllib.parse
 import webbrowser
 
-from PIL import Image as PILImage
-
 from jumble.Jumble import Jumble
+from PIL import Image as PILImage
 from variety import indicator
 from variety.AboutVarietyDialog import AboutVarietyDialog
 from variety.DominantColors import DominantColors
