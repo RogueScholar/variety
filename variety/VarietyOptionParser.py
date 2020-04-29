@@ -1,5 +1,5 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
-### BEGIN LICENSE
+# BEGIN LICENSE
 # Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License version 3, as published
@@ -12,7 +12,7 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
-### END LICENSE
+# END LICENSE
 
 import optparse
 
@@ -261,13 +261,16 @@ To set a specific wallpaper: %prog --set /some/local/image.jpg
 
     if report_errors:
         if (options.next or options.fast_forward) and options.previous:
-            parser.error(_("options --next/--fast-forward and --previous are mutually exclusive"))
+            parser.error(
+                _("options --next/--fast-forward and --previous are mutually exclusive"))
 
         if options.trash and options.favorite:
-            parser.error(_("options --trash and --favorite are mutually exclusive"))
+            parser.error(
+                _("options --trash and --favorite are mutually exclusive"))
 
         if options.pause and options.resume:
-            parser.error(_("options --pause and --resume are mutually exclusive"))
+            parser.error(
+                _("options --pause and --resume are mutually exclusive"))
 
         if (options.quotes_next or options.quotes_fast_forward) and options.quotes_previous:
             parser.error(
