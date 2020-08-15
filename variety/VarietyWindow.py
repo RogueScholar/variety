@@ -251,7 +251,8 @@ class VarietyWindow(Gtk.Window):
     def create_preferences_dialog(self):
         if not self.preferences_dialog:
             logger.debug(lambda: "create new preferences_dialog")
-            self.preferences_dialog = PreferencesVarietyDialog(parent=self)  # pylint: disable=E1102
+            self.preferences_dialog = PreferencesVarietyDialog(
+                parent=self)  # pylint: disable=E1102
 
             def _on_preferences_dialog_destroyed(widget, data=None):
                 logger.debug(lambda: "on_preferences_dialog_destroyed")
@@ -1758,7 +1759,8 @@ class VarietyWindow(Gtk.Window):
                 ]
                 dl.save_state()
 
-                # trigger download after some interval to reduce resource usage while the wallpaper changes
+                # trigger download after some interval to reduce resource usage while
+                # the wallpaper changes
                 delay_dl_timer = threading.Timer(2, self.trigger_download)
                 delay_dl_timer.daemon = True
                 delay_dl_timer.start()
@@ -3167,6 +3169,8 @@ class VarietyWindow(Gtk.Window):
                     for source in self.options.sources:
                         if source[0]:
                             type = source[1]
+                            if type not in Options.get_all_supported_source_types():
+                                continue
                             location = source[2]
 
                             if type == Options.SourceType.IMAGE:
