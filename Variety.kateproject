@@ -1,0 +1,11 @@
+{
+  "name": "Variety"
+, "build": {
+    "directory": "build"
+  , "build": "python3 ./setup.py build"
+  , "clean": "rm -rf build/"
+  , "install": "sudo -H python3.7 ./setup.py install"
+  }
+, "files": [ { "git": 1 } ]
+, "index": true
+}

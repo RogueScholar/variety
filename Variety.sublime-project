@@ -1,0 +1,27 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"Variety.sublime-workspace",
+				"Variety.kateproject",
+				"Variety.sublime-project"
+			],
+			"folder_exclude_patterns":
+			[
+				"variety/plugins/builtin/quotes/__pycache__",
+				".pytest_cache",
+				"variety/__pycache__",
+				"tests/__pycache__",
+				"variety/plugins/downloaders/__pycache__",
+				"variety_lib/__pycache__",
+				"variety/plugins/builtin/downloaders/__pycache__",
+				"variety/plugins/__pycache__",
+				"variety/plugins/builtin/__pycache__",
+				"jumble/__pycache__"
+			],
+			"path": "."
+		}
+	]
+}
