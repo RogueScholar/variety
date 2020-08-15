@@ -703,11 +703,10 @@ class VarietyWindow(Gtk.Window):
     def load_banned(self):
         self.banned = set()
         try:
-            partial = os.path.join(self.config_folder, "banned.txt.partial")
-            with open(partial, encoding="utf8") as f:
+            banned = os.path.join(self.config_folder, "banned.txt")
+            with open(banned, encoding="utf8") as f:
                 for line in f:
                     self.banned.add(line.strip())
-            os.rename(partial, os.path.join(self.config_folder, "banned.txt"))
         except Exception:
             logger.info(
                 lambda:
@@ -884,7 +883,7 @@ class VarietyWindow(Gtk.Window):
 
                     self.ind.show_origin.set_visible(bool(label))
                     self.ind.show_origin.set_sensitive(
-                        "noOriginPage" not in info)
+                        info and "noOriginPage" not in info)
                     if label:
                         self.ind.show_origin.set_label(label)
 
@@ -1500,8 +1499,11 @@ class VarietyWindow(Gtk.Window):
     def apply_copyto_operation(self, to_set):
         if self.options.copyto_enabled:
             folder = self.get_actual_copyto_folder()
-            target_file = os.path.join(
-                folder, "variety-copied-wallpaper-%s.jpg" % Util.random_hash())
+            target_fname = "variety-copied-wallpaper-%s%s" % (
+                Util.random_hash(),
+                os.path.splitext(to_set)[1],
+            )
+            target_file = os.path.join(folder, target_fname)
             self.cleanup_old_wallpapers(folder, "variety-copied-wallpaper")
             try:
                 shutil.copy(to_set, target_file)
@@ -2525,6 +2527,9 @@ class VarietyWindow(Gtk.Window):
                     self.on_pause_resume(change_enabled=True)
                 elif options.toggle_pause:
                     self.on_pause_resume()
+
+                if options.toggle_no_effects:
+                    self.toggle_no_effects(not bool(self.no_effects_on))
 
                 if options.history:
                     self.show_hide_history()
