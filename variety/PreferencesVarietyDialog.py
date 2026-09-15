@@ -1,17 +1,21 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2017–2025, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2025, François Thierry M. Marelli <francois.marelli@umons.ac.be>
+# SPDX-FileCopyrightText: © 2026, Peter J. Mello <admin@petermello.net>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
 # This is the preferences dialog.
@@ -403,27 +407,32 @@ class PreferencesVarietyDialog(PreferencesDialog):
         add_menu = Gtk.Menu()
 
         items = [
-            (False, _("Images"), _("Add individual wallpaper images"), self.on_add_images_clicked),
+            (
+                False,
+                _("Images"),
+                _("Add individual wallpaper images"),
+                self.on_add_images_clicked
+            ),
             (
                 False,
                 _("Folders"),
-                _("Searched recursively for up to 10000 images, shown in random order"),
+                _("Searched recursively for up to 10,000 images, unsorted"),
                 lambda widget: self.on_add_folders_clicked(
                     widget, source_type=Options.SourceType.FOLDER
                 ),
             ),
             (
                 False,
-                _("Sequential Albums (order by filename)"),
-                _("Searched recursively for images, shown in sequence (by filename)"),
+                _("Sequential albums (sorted by filename)"),
+                _("Searched recursively for images, sorted by filename"),
                 lambda widget: self.on_add_folders_clicked(
                     widget, source_type=Options.SourceType.ALBUM_FILENAME
                 ),
             ),
             (
                 False,
-                _("Sequential Albums (order by date)"),
-                _("Searched recursively for images, shown in sequence (by file date)"),
+                _("Sequential albums (sorted by date)"),
+                _("Searched recursively for images, sorted by modification time"),
                 lambda widget: self.on_add_folders_clicked(
                     widget, source_type=Options.SourceType.ALBUM_DATE
                 ),
@@ -483,9 +492,9 @@ class PreferencesVarietyDialog(PreferencesDialog):
         self.remove_menu = Gtk.Menu()
         item1 = Gtk.MenuItem()
         item1.set_label(
-            _("Remove the source, keep the files")
+            _("Remove source, but keep its files")
             if len(rows) == 1
-            else _("Remove the sources, keep the files")
+            else _("Remove sources, but keep their files")
         )
         item1.connect("activate", self.remove_sources)
         self.remove_menu.append(item1)
@@ -496,9 +505,9 @@ class PreferencesVarietyDialog(PreferencesDialog):
             self.remove_sources(delete_files=True)
 
         item2.set_label(
-            _("Remove the source and delete the downloaded files")
+            _("Remove source and delete its associated files")
             if len(rows) == 1
-            else _("Remove the sources and delete the downloaded files")
+            else _("Remove sources and delete their associated files")
         )
         item2.connect("activate", _remove_with_files)
         item2.set_sensitive(has_downloaders)
@@ -533,9 +542,8 @@ class PreferencesVarietyDialog(PreferencesDialog):
                 self.parent.show_notification(
                     refresher_dls[0].get_description(),
                     _(
-                        "Using this source requires wallpaper changing "
-                        "enabled at intervals of %d minutes or less. "
-                        "Settings were adjusted automatically."
+                        "Using this source requires enabling wallpaper updates at intervals "
+                        "of %d minutes or less. Settings were adjusted automatically."
                     )
                     % int(refresh_time / 60),
                 )
@@ -635,15 +643,15 @@ class PreferencesVarietyDialog(PreferencesDialog):
     def on_add_folders_clicked(self, widget=None, source_type=Options.SourceType.FOLDER):
         if source_type == Options.SourceType.FOLDER:
             title = _(
-                "Add Folders - Only add the root folders, subfolders are searched recursively"
+                "Add top-level folders (searched recursively)"
             )
         elif source_type == Options.SourceType.ALBUM_FILENAME:
             title = _(
-                "Add Sequential Albums (ordered by filename). Subfolders are searched recursively."
+                "Add sequential albums, sorted by filename (searched recursively)"
             )
         elif source_type == Options.SourceType.ALBUM_DATE:
             title = _(
-                "Add Sequential Albums (ordered by date). Subfolders are searched recursively."
+                "Add sequential albums, sorted by date (searched recursively)"
             )
         else:
             raise Exception("Unsuppoted source_type {}".format(source_type))
@@ -803,15 +811,15 @@ class PreferencesVarietyDialog(PreferencesDialog):
         self.previous_selection = rows
 
         self.ui.edit_source.set_sensitive(False)
-        self.ui.edit_source.set_label(_("Edit..."))
+        self.ui.edit_source.set_label(_("Edit…"))
         self.ui.open_folder.set_sensitive(len(rows) == 1)
-        self.ui.open_folder.set_label(_("Open Folder"))
+        self.ui.open_folder.set_label(_("Open folder"))
 
         if len(rows) == 1:
             source = model[rows[0]]
             type = source[1]
             if type == Options.SourceType.IMAGE:
-                self.ui.open_folder.set_label(_("View Image"))
+                self.ui.open_folder.set_label(_("View image"))
             elif type in Options.get_editable_source_types():
                 self.ui.edit_source.set_sensitive(self.ui.internet_enabled.get_active())
 
@@ -1289,7 +1297,7 @@ class PreferencesVarietyDialog(PreferencesDialog):
         except Exception:
             logger.exception(lambda: "Could not adjust copyto folder permissions")
             self.parent.show_notification(
-                _("Could not adjust permissions"),
+                _("Could not adjust folder permissions."),
                 _('You may try manually running this command:\nsudo chmod %s "%s"')
                 % (mode, folder),
             )
