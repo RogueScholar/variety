@@ -11,6 +11,12 @@ impossible for us, the main developers, to reproduce.
 Thus a pull request where the author has managed to reproduce reliably a bug and provides a fix
 is an extremely valuable contribution - these are always very welcome.
 
+## Translations
+
+As of July 2021 we are using Transifex for managing translations: https://www.transifex.com/variety/variety
+
+Please ping **@jlu5** if you want to be added to the project.
+
 ## Bigger changes or new features
 
 If you plan on implementing any significant changes or developing new features,
@@ -32,10 +38,6 @@ Every new image source to be added to Variety should meet several criteria:
   wallpapers. The general policy is that we prefer quality over both quantity and searchability /
   customization.
 
-Suggestions for adding specific Flickr photographers' feeds as default sources are also welcome, as
-long as their images meet the license and quality criteria above (the other two are met
-by default with Flickr)
-
 ## Code style
 
 We use Black and isort, using line length of 100 symbols.
@@ -44,7 +46,7 @@ Run on changed files with:
 
 ```
 isort -rc edited_file_or_folder
-black --line-length 100 --target-version py35 edited_file_or_folder
+black --line-length 100 --target-version py39 edited_file_or_folder
 ```
 
 Or use directly the provided script `toolchain/autoformat` for this.
@@ -59,16 +61,30 @@ cd .git/hooks && ln -sf ../../toolchain/pre-commit-autoformat pre-commit
 
 ## Testing
 
-We don't have CI support, yet. Please make sure all tests under the `tests` folder pass in your
-branch. Run tests with, from the root of the project:
+Please make sure all tests under the `tests` folder pass in your
+branch. Run tests from the root of the project with:
 
 ```
 python3 -m unittest discover -p 'Test*.py' tests
 ```
 
 All of the tests for the various image sources actually access the image source, so these
-could fail sometimes when the remote site is down for maintenance - use common sense for whether
-your changes caused the failure or it failed because of ax external reason.
+could fail when the remote site is down for maintenance or the downloader is out of date.
+It's okay to skip them if your changes are unrelated to those failures.
 
 Please note the test suite is not yet very extensive, and also does not cover any of the UI
-aspects of Variety - always do some manual tests before you consider your PR is complete.
+aspects of Variety - if your changes are in this area, you should test it manually before you consider your PR complete.
+
+## Editing UI files
+We have used Glade to develop the GTK UI dialogs of Variety.
+To install glade on Ubuntu:
+```commandline
+sudo apt install glade
+```
+
+If you just run it and try to open one of the .ui files in `data/ui`,
+it would give you an error.
+Here is how to run it successfully:
+```
+GLADE_CATALOG_SEARCH_PATH=data/ui/ glade data/ui/PreferencesVarietyDialog.ui
+```

@@ -27,7 +27,7 @@ from gi.repository import Gdk, GdkPixbuf, GObject, Gtk  # pylint: disable=E0611
 
 from variety import Texts
 from variety.AddConfigurableDialog import AddConfigurableDialog
-from variety.AddFlickrDialog import AddFlickrDialog
+from variety.AddWallhavenDialog import AddWallhavenDialog
 from variety.EditFavoriteOperationsDialog import EditFavoriteOperationsDialog
 from variety.FolderChooser import FolderChooser
 from variety.Options import Options
@@ -46,6 +46,9 @@ from variety_lib.varietyconfig import get_data_file
 
 random.seed()
 logger = logging.getLogger("variety")
+
+SLIDESHOW_PAGE_INDEX = 4
+DONATE_PAGE_INDEX = 10
 
 
 class PreferencesVarietyDialog(PreferencesDialog):
@@ -79,7 +82,7 @@ class PreferencesVarietyDialog(PreferencesDialog):
         )
 
         if not Util.check_variety_slideshow_present():
-            self.ui.notebook.remove_page(2)
+            self.ui.notebook.remove_page(SLIDESHOW_PAGE_INDEX)
 
         profile_suffix = (
             "" if is_default_profile() else _(" (Profile: {})").format(get_profile_short_name())
@@ -132,8 +135,14 @@ class PreferencesVarietyDialog(PreferencesDialog):
             self.ui.change_enabled.set_active(self.options.change_enabled)
             self.set_change_interval(self.options.change_interval)
             self.ui.change_on_start.set_active(self.options.change_on_start)
+            self.ui.internet_enabled.set_active(self.options.internet_enabled)
 
             self.fav_chooser.set_folder(os.path.expanduser(self.options.favorites_folder))
+            self.ui.wallpaper_auto_rotate.set_active(self.options.wallpaper_auto_rotate)
+            self.ui.wallpaper_display_mode.remove_all()
+            for mode in self.parent.get_display_modes():
+                self.ui.wallpaper_display_mode.append(mode.id, mode.title)
+            self.ui.wallpaper_display_mode.set_active_id(self.options.wallpaper_display_mode)
 
             self.fetched_chooser.set_folder(os.path.expanduser(self.options.fetched_folder))
             self.ui.clipboard_enabled.set_active(self.options.clipboard_enabled)
@@ -171,6 +180,7 @@ class PreferencesVarietyDialog(PreferencesDialog):
 
             self.favorites_operations = self.options.favorites_operations
 
+            self.ui.change_lock_screen_box.set_active(self.options.change_lock_screen)
             self.ui.copyto_enabled.set_active(self.options.copyto_enabled)
             self.copyto_chooser.set_folder(self.parent.get_actual_copyto_folder())
 
@@ -197,6 +207,8 @@ class PreferencesVarietyDialog(PreferencesDialog):
             )
             self.ui.min_rating_enabled.set_active(self.options.min_rating_enabled)
             self.ui.min_rating.set_active(self.options.min_rating - 1)
+            self.ui.name_regex_enabled.set_active(self.options.name_regex_enabled)
+            self.ui.name_regex.set_text(self.options.name_regex)
             self.ui.clock_enabled.set_active(self.options.clock_enabled)
             self.ui.clock_font.set_font_name(self.options.clock_font)
             self.ui.clock_date_font.set_font_name(self.options.clock_date_font)
@@ -341,14 +353,13 @@ class PreferencesVarietyDialog(PreferencesDialog):
             self.on_min_size_enabled_toggled()
             self.on_lightness_enabled_toggled()
             self.on_min_rating_enabled_toggled()
+            self.on_name_regex_enabled_toggled()
             self.on_copyto_enabled_toggled()
             self.on_quotes_change_enabled_toggled()
             self.on_icon_changed()
             self.on_favorites_operations_changed()
+            self.on_wallpaper_display_mode_changed()
             self.update_clipboard_state()
-
-            self.build_add_button_menu()
-
             self.update_status_message()
         finally:
             # To be sure we are completely loaded, pass via two hops: first delay, then idle_add:
@@ -371,9 +382,8 @@ class PreferencesVarietyDialog(PreferencesDialog):
                 True,
             )
 
-        self.add_menu.popup(
-            None, self.ui.add_button, position, None, 0, Gtk.get_current_event_time()
-        )
+        add_menu = self.build_add_button_menu()
+        add_menu.popup(None, self.ui.add_button, position, None, 0, Gtk.get_current_event_time())
 
     def on_remove_sources_clicked(self, widget=None):
         def position(*args, **kwargs):
@@ -390,11 +400,12 @@ class PreferencesVarietyDialog(PreferencesDialog):
         )
 
     def build_add_button_menu(self):
-        self.add_menu = Gtk.Menu()
+        add_menu = Gtk.Menu()
 
         items = [
-            (_("Images"), _("Add individual wallpaper images"), self.on_add_images_clicked),
+            (False, _("Images"), _("Add individual wallpaper images"), self.on_add_images_clicked),
             (
+                False,
                 _("Folders"),
                 _("Searched recursively for up to 10000 images, shown in random order"),
                 lambda widget: self.on_add_folders_clicked(
@@ -402,6 +413,7 @@ class PreferencesVarietyDialog(PreferencesDialog):
                 ),
             ),
             (
+                False,
                 _("Sequential Albums (order by filename)"),
                 _("Searched recursively for images, shown in sequence (by filename)"),
                 lambda widget: self.on_add_folders_clicked(
@@ -409,6 +421,7 @@ class PreferencesVarietyDialog(PreferencesDialog):
                 ),
             ),
             (
+                False,
                 _("Sequential Albums (order by date)"),
                 _("Searched recursively for images, shown in sequence (by file date)"),
                 lambda widget: self.on_add_folders_clicked(
@@ -416,17 +429,24 @@ class PreferencesVarietyDialog(PreferencesDialog):
                 ),
             ),
             "-",
-            (_("Flickr"), _("Fetch images from Flickr"), self.on_add_flickr_clicked),
         ]
 
-        for source in sorted(
-            self.options.CONFIGURABLE_IMAGE_SOURCES, key=lambda s: s.get_source_name()
-        ):
+        configurable_items = []
+        for source in self.options.CONFIGURABLE_IMAGE_SOURCES:
 
             def _click(widget, source=source):
                 self.on_add_configurable(source)
 
-            items.append((source.get_source_name(), source.get_ui_short_description(), _click))
+            configurable_items.append(
+                (
+                    source.needs_internet(),
+                    source.get_source_name(),
+                    source.get_ui_short_description(),
+                    _click,
+                )
+            )
+        configurable_items.sort(key=lambda x: x[1])
+        items.extend(configurable_items)
 
         for x in items:
             if x == "-":
@@ -435,16 +455,21 @@ class PreferencesVarietyDialog(PreferencesDialog):
                 item.set_margin_bottom(15)
             else:
                 item = Gtk.MenuItem()
-                label = Gtk.Label("<b>{}</b>\n{}".format(x[0], x[1]))
+                label = Gtk.Label("<b>{}</b>\n{}".format(x[1], x[2]))
                 label.set_margin_top(6)
                 label.set_margin_bottom(6)
                 label.set_xalign(0)
                 label.set_use_markup(True)
                 item.add(label)
-                item.connect("activate", x[2])
-            self.add_menu.append(item)
+                if x[0] and not self.ui.internet_enabled.get_active():
+                    # disable adding internet-requiring sources when internet is disabled
+                    item.set_sensitive(False)
+                else:
+                    item.connect("activate", x[3])
+            add_menu.append(item)
 
-        self.add_menu.show_all()
+        add_menu.show_all()
+        return add_menu
 
     def build_remove_button_menu(self):
         model, rows = self.ui.sources.get_selection().get_selected_rows()
@@ -749,14 +774,20 @@ class PreferencesVarietyDialog(PreferencesDialog):
         type = edited_row[1]
 
         if type in Options.get_editable_source_types():
-            if type == Options.SourceType.FLICKR:
-                self.dialog = AddFlickrDialog()
-            elif type in Options.CONFIGURABLE_IMAGE_SOURCES_MAP:
-                self.dialog = AddConfigurableDialog()
+            if type in Options.CONFIGURABLE_IMAGE_SOURCES_MAP:
+                if type == Options.SourceType.WALLHAVEN:
+                    self.dialog = AddWallhavenDialog(self.parent)
+                else:
+                    self.dialog = AddConfigurableDialog()
                 self.dialog.set_source(Options.CONFIGURABLE_IMAGE_SOURCES_MAP[type])
 
             self.dialog.set_edited_row(edited_row)
             self.show_dialog(self.dialog)
+
+    def on_internet_enabled_toggled(self, *args):
+        self.delayed_apply()
+        self.previous_selection = None
+        self.on_sources_selection_changed()
 
     def on_sources_selection_changed(self, widget=None):
         model, rows = self.ui.sources.get_selection().get_selected_rows()
@@ -782,7 +813,7 @@ class PreferencesVarietyDialog(PreferencesDialog):
             if type == Options.SourceType.IMAGE:
                 self.ui.open_folder.set_label(_("View Image"))
             elif type in Options.get_editable_source_types():
-                self.ui.edit_source.set_sensitive(True)
+                self.ui.edit_source.set_sensitive(self.ui.internet_enabled.get_active())
 
         def timer_func():
             self.show_thumbs(list(model[row] for row in rows))
@@ -816,7 +847,6 @@ class PreferencesVarietyDialog(PreferencesDialog):
 
             images = []
             folders = []
-            image_count = 0
 
             for row in source_rows:
                 if not row:
@@ -824,57 +854,57 @@ class PreferencesVarietyDialog(PreferencesDialog):
 
                 type = row[1]
                 if type == Options.SourceType.IMAGE:
-                    image_count += 1
                     images.append(row[2])
                 else:
                     folder = self.parent.get_folder_of_source(self.model_row_to_source(row))
-                    image_count += sum(
-                        1
-                        for f in Util.list_files(
-                            folders=(folder,),
-                            filter_func=Util.is_image,
-                            max_files=1,
-                            randomize=False,
-                        )
-                    )
                     folders.append(folder)
 
-            if image_count > -1:
-                folder_images = list(
-                    Util.list_files(folders=folders, filter_func=Util.is_image, max_files=1000)
-                )
-                if len(source_rows) == 1 and source_rows[0][1] == Options.SourceType.ALBUM_FILENAME:
-                    folder_images = sorted(folder_images)
-                elif len(source_rows) == 1 and source_rows[0][1] == Options.SourceType.ALBUM_DATE:
-                    folder_images = sorted(folder_images, key=os.path.getmtime)
-                else:
-                    random.shuffle(folder_images)
-                to_show = images + folder_images
-                if hasattr(self, "focused_image") and self.focused_image is not None:
-                    try:
-                        to_show.remove(self.focused_image)
-                    except Exception:
-                        pass
-                    to_show.insert(0, self.focused_image)
-                    self.focused_image = None
-                self.parent.thumbs_manager.show(
-                    to_show, screen=self.get_screen(), folders=folders, type=thumbs_type
-                )
-                if pin:
-                    self.parent.thumbs_manager.pin()
-                if thumbs_type:
-                    self.parent.update_indicator(auto_changed=False)
+            folder_images = list(
+                Util.list_files(folders=folders, filter_func=Util.is_image, max_files=10000)
+            )
+            if len(source_rows) == 1 and source_rows[0][1] == Options.SourceType.ALBUM_FILENAME:
+                folder_images = sorted(folder_images)
+            elif len(source_rows) == 1 and source_rows[0][1] == Options.SourceType.ALBUM_DATE:
+                folder_images = sorted(folder_images, key=os.path.getmtime)
+            else:
+                random.shuffle(folder_images)
+            to_show = images + folder_images
+            if hasattr(self, "focused_image") and self.focused_image is not None:
+                try:
+                    to_show.remove(self.focused_image)
+                except Exception:
+                    pass
+                to_show.insert(0, self.focused_image)
+                self.focused_image = None
+            self.parent.thumbs_manager.show(
+                to_show, screen=self.get_screen(), folders=folders, type=thumbs_type
+            )
+            if pin:
+                self.parent.thumbs_manager.pin()
+            if thumbs_type:
+                self.parent.update_indicator(auto_changed=False)
 
         except Exception:
             logger.exception(lambda: "Could not create thumbs window:")
 
-    def on_add_flickr_clicked(self, widget=None):
-        self.show_dialog(AddFlickrDialog())
-
     def on_add_configurable(self, source):
-        dialog = AddConfigurableDialog()
+        if source.get_source_type() == Options.SourceType.WALLHAVEN:
+            dialog = AddWallhavenDialog(self.parent)
+        else:
+            dialog = AddConfigurableDialog()
         dialog.set_source(source)
         self.show_dialog(dialog)
+
+    def on_wallpaper_display_mode_changed(self, *args):
+        modes = [
+            m
+            for m in self.parent.get_display_modes()
+            if m.id == self.ui.wallpaper_display_mode.get_active_id()
+        ]
+        if modes:
+            self.ui.wallpaper_mode_description.set_text(modes[0].description)
+        else:
+            self.ui.wallpaper_mode_description.set_text("")
 
     def show_dialog(self, dialog):
         self.dialog = dialog
@@ -933,6 +963,7 @@ class PreferencesVarietyDialog(PreferencesDialog):
             self.options.change_enabled = self.ui.change_enabled.get_active()
             self.options.change_on_start = self.ui.change_on_start.get_active()
             self.options.change_interval = self.get_change_interval()
+            self.options.internet_enabled = self.ui.internet_enabled.get_active()
 
             if os.access(self.fav_chooser.get_folder(), os.W_OK):
                 self.options.favorites_folder = self.fav_chooser.get_folder()
@@ -943,6 +974,9 @@ class PreferencesVarietyDialog(PreferencesDialog):
                 self.options.sources.append(self.model_row_to_source(r))
             for s in self.unsupported_sources:
                 self.options.sources.append(s)
+
+            self.options.wallpaper_auto_rotate = self.ui.wallpaper_auto_rotate.get_active()
+            self.options.wallpaper_display_mode = self.ui.wallpaper_display_mode.get_active_id()
 
             if os.access(self.fetched_chooser.get_folder(), os.W_OK):
                 self.options.fetched_folder = self.fetched_chooser.get_folder()
@@ -987,6 +1021,7 @@ class PreferencesVarietyDialog(PreferencesDialog):
                 pass
 
             self.options.copyto_enabled = self.ui.copyto_enabled.get_active()
+            self.options.change_lock_screen = self.ui.change_lock_screen_box.get_active()
             copyto = os.path.normpath(self.copyto_chooser.get_folder())
             if copyto == os.path.normpath(self.parent.get_actual_copyto_folder("Default")):
                 self.options.copyto_folder = "Default"
@@ -1015,6 +1050,12 @@ class PreferencesVarietyDialog(PreferencesDialog):
             self.options.min_rating_enabled = self.ui.min_rating_enabled.get_active()
             try:
                 self.options.min_rating = int(self.ui.min_rating.get_active_text())
+            except Exception:
+                pass
+
+            self.options.name_regex_enabled = self.ui.name_regex_enabled.get_active()
+            try:
+                self.options.name_regex = self.ui.name_regex.get_text()
             except Exception:
                 pass
 
@@ -1143,6 +1184,9 @@ class PreferencesVarietyDialog(PreferencesDialog):
 
     def on_min_rating_enabled_toggled(self, widget=None):
         self.ui.min_rating.set_sensitive(self.ui.min_rating_enabled.get_active())
+
+    def on_name_regex_enabled_toggled(self, widget=None):
+        self.ui.name_regex.set_sensitive(self.ui.name_regex_enabled.get_active())
 
     def on_lightness_enabled_toggled(self, widget=None):
         self.ui.lightness.set_sensitive(self.ui.lightness_enabled.get_active())

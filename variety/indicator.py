@@ -109,7 +109,7 @@ class Indicator:
 
         self.next = Gtk.MenuItem(_("_Next"))
         self.next.set_use_underline(True)
-        self.next.connect("activate", window.next_wallpaper)
+        self.next.connect("activate", window.next_image_same_quote)
         self.image_menu.append(self.next)
 
         self.prev = Gtk.MenuItem(_("_Previous"))
@@ -285,7 +285,7 @@ class Indicator:
             self.slideshow.connect("activate", window.on_start_slideshow)
             self.menu.append(self.slideshow)
         else:
-            logger.warning(
+            logger.info(
                 "Variety Slideshow is not installed. This is an optional extension "
                 "adding pan-and-zoom slideshows to Variety: see "
                 "https://github.com/peterlevi/variety-slideshow for details"

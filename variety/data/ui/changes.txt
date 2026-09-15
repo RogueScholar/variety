@@ -1,0 +1,295 @@
+0.9.1
+    Fix #844: Fix clock overlay (regression from v0.9.0)
+    Fix #864: Fix negative clock offsets
+    Fix #842: Readd support for Hyprland (regression from v0.8.13)
+    Fix #856: Use processed wallpaper path on Cosmic DE
+    Update Portuguese translations
+    Improvement #859: Add translations for the .desktop entry
+
+0.9.0
+    NOTE TO PACKAGERS: Variety 0.9.0 switches from distutils-extra to setuptools and importlib.resources.
+        - The variety.desktop entry now needs to be manually installed, as this is not handled by setuptools automatically
+        - Media, scripts, and other resources are now bundled in the "variety" Python package
+    Fix #834: Add support for newer GExiv2 versions (Fedora 44)
+    Fix #823: Fall back to convert if magick command is not found (Ubuntu 24.04 and earlier)
+    Fix #838: Fix "Fit within screen, pad with a blurred background" display mode blurring the whole image
+    Update Spanish translations
+
+0.9.0-beta1
+    Improvement #795/#800: fix Python 3.14 support; switch to setuptools-gettext and virtualenv for local development
+    Remove broken Flickr and National Geographic downloaders
+    Feature #309: Make changing lock screen backgrounds optional (Customize -> Change lock screen background automatically)
+    Feature #714: Add support for Cosmic DE
+    Feature #814: add support for KDE Active Blur wallpaper plugin
+    Feature #794: Add --meta CLI option to print wallpaper info
+    Fix #728: use magick command instead of deprecated convert
+    Fix #807: add support for newer versions of Budgie
+    Fix #815: XFCE wallpaper cannot be set on clean installs due to missing backdrop properties
+    Fix #802: fix killing old swaybg processes
+    Improvement #792: add .webp support
+    Improvement #778: Update German translations
+
+0.8.13
+    Fix #741: Fix downloading server side options (remove tiny.cc redirector)
+    Fix #733: Fix for EarthviewDownloader
+    Fix #704: In "smart" display mode, tile small wallpapers using ImageMagick (#727)
+    Improvement #731: Add support for KDE 6 lockscreen
+    Improvement #752: set_wallpaper: default to feh/nitrogen instead of hardcoding a list of WMs
+    Feature #756: Add support for Fluxbox (via fbsetbg)
+    Feature #619: Add regex name filter for wallpapers
+    Update French and German translations
+
+0.8.12
+    Fix #672: add support for KDE Plasma 6
+
+0.8.11
+    Fix #652: use importlib to support Python >= 3.12
+    Fix #424: Use only the primary monitor for thumbs window (#649)
+    Improvement #609: filter Unsplash Plus images
+    Improvement #604: download UHD images from Bing
+    Feature #621: Add AVIF image format support
+    Updated translations: Spanish (#607) and Brazilian Portuguese (#614)
+    set_wallpaper: add support for i3-gnome (#595), Hyprland (#618), spectrwm (#626)
+    set_wallpaper: only set Plasma wallpaper on desktops using an image background (#611)
+    set_wallpaper: use dbus-send instead of qdbus for setting KDE wallpaper (#633)
+
+0.8.10
+    Bugfix #577: Fix Unsplash downloads
+    Bugfix #553: Keep the current quote when using Image->Next
+    Bugfix #418: on AwesomeWM, apply the same image on all monitors separately instead of stretching across them
+    Feature #559: add support for handling Unsplash topic URLs
+    Improvement #586: Use official API for EarthView
+
+0.8.9
+    Bugfix #536, #537: Fix errors when there is no primary monitor configured
+
+0.8.8
+    Feature #89: Added options to select fit size / wallpaper mode. Added an image-dependent smart fit mode.
+    Bugfix #519: Fix issues with autostart.
+    Bugfix #534: Fix the fallback Wallhaven non-API downloading mode used for some Wallhaven URLs.
+    Bugfix #480: Improve image searching: Avoid deep/huge folders causing Variety to ignore the other folders.
+
+0.8.7
+    Added a global switch to turn Internet connectivity for Variety off or on.
+    Wallhaven sources now use the Wallhaven API, not html parsing.
+    Support for fetching NSFW images from Wallhaven.
+        When adding Wallhaven sources, you can provide your own Wallhaven API key.
+        If provided, and the source URL is set to search for NSFW images, Variety will obey.
+    Auto-upgrade set_wallpaper/get_wallpaper scripts.
+        Starting from this release, Variety will always automatically upgrade
+        the set_wallpaper/get_wallpaper scripts to make sure fixes to those are picked up.
+        Your old files have been preserved in the ~/.config/variety/scripts folder.
+        If you need to use custom scripts, please set their paths in the
+        set_wallpaper_script/get_wallpaper_script properties in ~/.config/variety/variety.conf.
+
+0.8.6
+    New source: National Geographic's photo of the day
+    New source: ArtStation
+    Add support for Gnome's Dark style
+    Change default font for quotes and clock to Serif for greater compatibility
+    Translation updates and bugfixes
+
+0.8.5
+    Fixes for Python 3.9 support
+    Fix GH-388: Cleanup of wallpaper folder now cleans all image types
+    Fix GH-363: We were almost never triggering purging downloads
+    Enable support for Qtile-venv (GH-386)
+    Updated Japanese translations
+
+0.8.4
+    Remove dead Desktoppr, ChromeOS sources (GH-323)
+    Properly verify TLS certificates when downloading images (GH-326)
+    Fix banning images when using Delete to Trash option (GH-304)
+    Preserve file extensions when copying wallpapers to another folder (GH-240)
+    Fix crash in indicator code when image origin is not available (GH-287)
+    Remove spurious "No such schema “org.cinnamon.desktop.background” errors" (GH-329)
+    Update Unsplash rate limit (GH-332)
+    Better detection for AwesomeWM (GH-282)
+
+0.8.0 - 0.8.3
+    Image sources are now plugins
+    Add support for sequential albums
+    Add support for multiple simultaneously running Variety profiles (--profile command option)
+    Add a Privacy Notice dialog
+    Add support for configurable Unsplash sources
+    Add two new sources (ChromeOS Wallpapers and Google Earth View Wallpapers)
+    Remove World Sunlight Map source
+    Added Urban Dictionary and UNIX fortune program as quote sources
+    Download linked to wallpaper changing, not configured as a separate interval
+    Add a dedicated --set/--set-wallpaper option
+    Make the thumbs display much faster
+    Fix bugs related to GTK threading usage
+    Multiple bugfixes
+    Dev process: Use auformatting on all Python files (black, isort)
+
+0.7.2
+    Add support for Sway, bspwm
+    Enable AwesomeWM support by default
+    Fix crash on --help or --version if a Variety instance is already running (GH-148)
+    Fix spurious "file not found" errors when checking for animated GIFs (GH-132)
+    New translations: Chinese, Japanese
+
+0.7.1
+    Fix remaining bugs from the Python 3 port: errors when saving favorite quotes and generating pencil_tile.png
+
+0.7.0
+    New translation: Turkish
+    Fix possible download issues when upgrading from older Variety versions and having safe mode enabled
+    GoodreadsSource: fix stray HTML tags being displayed in quote authors
+
+0.7.0-beta1
+    Port to Python 3
+    Fix broken trash deletion on some systems by directly using Gio libraries
+    Fix potential log file corruption when trying to start multiple instances
+    Support for setting GNOME Screensaver / GDM background
+    Removed outdated functionality for publishing to Facebook
+    Updated URL for QuotationsPage plugin
+    Update default clipboard_hosts: add deviantart.net, imageshack.com; remove (dead) ns223506.ovh.net
+
+0.6.9
+    Removed broken "SSL dependency" installation code
+    Fix trash deletion (0.6.8 regression) and replace gvfs-trash (deprecated) with 'gio trash'
+    Skip metadata checks on non-image files, leading to "GExiv2: unsupported format" warnings
+    Use subprocess.Popen to run xdg-open so that it doesn't block on some distros (LXQt, Trinity DE)
+    Removed more dead code related to VRTY.org, Panoramio, KDE 4
+    Add get_wallpaper support for KDE Plasma 5; fix support for LXDE
+    Move bug tracker links to GitHub
+
+0.6.8
+    Unsplash API update
+    Remove everything related to VRTY.org which is not running anymore
+
+0.6.7
+    Fix "unary operator expected" errors on KDE variables in set_wallpaper
+    New WM support: i3 with logging (i3-with-shmlog), Moksha (e17 fork), dwm
+    i3 and openbox code now uses either feh or nitrogen interchangeably
+    Removed Debian-specific use of dpkg-query in checks for nitrogen
+    Switch to Ayatana indicators by default
+    Many fixes to set_wallpaper pointed out by shellcheck
+
+0.6.6
+    [Security] Fixed multiple shell injection issues in the "Delete to Trash", filter, and clock code
+    Add long-awaited wallpaper changing support on KDE Plasma 5
+    Fix crash when gi-appindicator isn't installed
+    Removed verbose console output by default, as this tends to spam syslog and ~/.xsession-errors when launched via autostart - see https://bugs.launchpad.net/bugs/1685003
+    Fixed Variety showing the wrong version in the About dialog
+
+0.6.5
+    Fix "Previous" wallpaper button on MATE 1.10 and later
+    Fix quote applying with Pillow >= 4.2.0, patch from Elon Bing
+    Remove Panoramio support, as that service no longer exists. Initial patch by Balló György in Arch Linux.
+    Fix high CPU usage when mousing away from the thumbnail selector
+    Add trinity-desktop support and AppStream metadata for GNOME Software Center
+
+0.6.2 - 0.6.4
+    Safe mode added for filtering out NSFW images
+
+0.6.1
+    Bugfixes
+
+0.6.0
+    Variety Slideshow
+
+0.5.4 - 0.5.5
+    Moving to a standard Debian-style installation
+    Bing and Unsplash support
+    Out-of-the-box support for i3 and LXQt
+
+0.5.1 - 0.5.3
+    Bugfixes
+
+0.5.0
+    VRTY.ORG integration, synchronization of favorites
+    Wallhaven support
+    Reddit support
+    Google Image Search option
+    Updated autostart desktop file
+    Bugfixes
+
+0.4.20
+    Unicode-related bugfixes
+
+0.4.19
+    Fixed Flickr and Wallpapers.net support
+    Added Panoramio support
+    Added support for Enlightenment
+    Added Wallpaper Selector option
+    Streamlined menu
+    Easier Facebook sharing process
+    Unicode support fixes and other bugfixes
+
+0.4.18
+    Fixes for XFCE 4.10 and up and KDE 4.10 and up
+    Other bugfixes
+
+0.4.16, 0.4.17
+    Fixed Wallbase and Wallpapers.net support
+    Quote plugins, much richer quote sources
+
+0.4.14, 0.4.15
+    Add support for MATE 1.6 and Cinnamon 1.8
+    Better support for LightDM
+    Fix problems with the folder choosers
+    Many bugfixes
+
+0.4.13
+    Bugfixes and polishing
+    First translations added: Spanish, Russian, Bulgarian
+    Better Remove source functionality
+
+0.4.12
+    Quotes
+    Preferences take effect immediately, no Save button
+    Customizable indicator icon
+    Image rating support
+
+0.4.11
+    Bugfixes
+    Option to choose between Move and Copy to Favorites
+
+0.4.10
+    Media RSS support
+    Live Earth sunlight map support
+    Simplified menu (separate Playback submenu)
+    Display source option
+    Option to show recent downloads
+    Support for command-line arguments
+
+0.4.9
+    Mark current wallpaper in thumbnails view
+    Bugfixes and speed improvements
+    KDE support
+
+0.4.8
+    Sharing to Facebook
+    Option to show a nice clock on the desktop
+
+0.4.7
+    Support more desktop environments out of the box
+    (Tested on Xubuntu, Lubuntu, Mint MATE and Mint Cinnamon)
+
+0.4.6
+    Reordered menu for quicker access to most common actions
+    Added Fast Forward function to skip forward history
+
+0.4.5
+    History view
+    Better thumbnails view: configurable size and position, file operations
+
+0.4.4
+    Faster filters
+    Store origin info inside image metadata, not txt files
+
+0.4.1 - 0.4.3
+    Added thumbnail view, initial version. Bugfixes.
+
+0.4
+    Manual image downloading via drag-and-drop or clipboard
+
+0.3.14
+    Editing of sources
+    Better trash/favorite operations
+
+0.3.13
+    Wallbase.cc support
+    NASA Astronomy Picture of the Day support

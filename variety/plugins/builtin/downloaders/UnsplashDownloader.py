@@ -97,16 +97,24 @@ class UnsplashDownloader(SimpleDownloader):
                     continue
 
                 image_url = item["urls"]["full"] + "&w={}".format(
-                    max(1980, int(Util.get_screen_width() * 1.2))
+                    max(1980, int(Util.get_primary_display_size()[0] * 1.2))
                 )
                 origin_url = item["links"]["html"] + UnsplashDownloader.UTM_PARAMS
+                
+                if "plus.unsplash.com/" in image_url:  # exclude watermarked wallpapers
+                    continue
 
                 extra_metadata = {
                     "sourceType": "unsplash",
                     "sfwRating": 100,
                     "author": item["user"]["name"],
                     "authorURL": item["user"]["links"]["html"] + UnsplashDownloader.UTM_PARAMS,
-                    "keywords": [cat["title"].lower().strip() for cat in item["categories"]],
+                    "description": item.get("description", item.get("alt_description")),
+                    "keywords": [
+                        cat
+                        for cat, approval in item.get("topic_submissions", {}).items()
+                        if approval.get("status") == "approved"
+                    ],
                     "extraData": {
                         "unsplashDownloadLocation": item["links"]["download_location"],
                         "unsplashDownloadReported": False,

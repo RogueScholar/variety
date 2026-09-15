@@ -84,8 +84,7 @@ class QuoteWriter:
         iw = surface.get_width()
         ih = surface.get_height()
 
-        sw = Gdk.Screen.get_default().get_width()
-        sh = Gdk.Screen.get_default().get_height()
+        sw, sh = Util.get_primary_display_size(hidpi_scaled=True)
         trimw, trimh = Util.compute_trimmed_offsets((iw, ih), (sw, sh))
 
         width = max(
@@ -96,7 +95,7 @@ class QuoteWriter:
         qlayout.set_width((width - 4 * margin) * Pango.SCALE)
         qlayout.set_alignment(Pango.Alignment.LEFT)
         qlayout.set_wrap(Pango.WrapMode.WORD)
-        font = options.quotes_font if options else "Bitstream Charter 30"
+        font = options.quotes_font if options else "Serif 30"
         qlayout.set_font_description(Pango.FontDescription(font))
         qlayout.set_text(quote, -1)
 

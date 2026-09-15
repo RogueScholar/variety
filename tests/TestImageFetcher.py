@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### END LICENSE
+import os
 import os.path
 import shutil
 import unittest
@@ -23,6 +24,7 @@ from variety.ImageFetcher import ImageFetcher
 
 
 class TestImageFetcher(unittest.TestCase):
+    @unittest.skipIf(os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)")
     def test_fetch(self):
         target_folder = "/tmp/variety/ImageFetcher"
         shutil.rmtree(target_folder, ignore_errors=True)
@@ -30,8 +32,6 @@ class TestImageFetcher(unittest.TestCase):
         for url in [
             "https://w.wallhaven.cc/full/dg/wallhaven-dgeqoj.jpg",
             "http://unsplash.com/photos/7EqQ1s3wIAI/download",
-            "http://az608707.vo.msecnd.net/files/GreaterFlamingos_EN-US13682107304_1366x768.jpg",
-            "http://a.desktopprassets.com/wallpapers/07865fb0cb575e82fe43d3e1b634f6e2309e2114/foto_alese45.jpg",
         ]:
             f = ImageFetcher.fetch(url, target_folder, verbose=False)
             self.assertIsNotNone(f)

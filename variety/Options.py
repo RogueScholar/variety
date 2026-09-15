@@ -28,7 +28,7 @@ TRUTH_VALUES = ["enabled", "1", "true", "on", "yes"]
 
 
 class Options:
-    OUTDATED_HASHES = {"clock_filter": ["dca6bd2dfa2b8c4e2db8801e39208f7f"]}
+    OUTDATED_HASHES = {"clock_filter": ["dca6bd2dfa2b8c4e2db8801e39208f7f", "a565a0c34a1358af4fb040d30cca6933"]}
     SIMPLE_DOWNLOADERS = []  # set by VarietyWindow at start
     IMAGE_SOURCES = []  # set by VarietyWindow at start
     CONFIGURABLE_IMAGE_SOURCES = []  # set by VarietyWindow at start
@@ -45,8 +45,7 @@ class Options:
         FAVORITES = "favorites"
         FETCHED = "fetched"
 
-        # predefined configurable sources
-        FLICKR = "flickr"
+        WALLHAVEN = "wallhaven"
 
         BUILTIN_SOURCE_TYPES = {
             IMAGE,
@@ -55,16 +54,15 @@ class Options:
             ALBUM_DATE,
             FAVORITES,
             FETCHED,
-            FLICKR,
         }
 
         LOCAL_PATH_TYPES = {IMAGE, FOLDER, ALBUM_FILENAME, ALBUM_DATE}
 
         LOCAL_TYPES = {IMAGE, FOLDER, ALBUM_FILENAME, ALBUM_DATE, FAVORITES, FETCHED}
 
-        DL_TYPES = {FLICKR}
+        DL_TYPES = set()
 
-        EDITABLE_DL_TYPES = {FLICKR}
+        EDITABLE_DL_TYPES = set()
 
         REMOVABLE_TYPES = {FOLDER, IMAGE, ALBUM_FILENAME, ALBUM_DATE} | EDITABLE_DL_TYPES
 
@@ -100,7 +98,32 @@ class Options:
                 pass
 
             try:
+                self.internet_enabled = config["internet_enabled"].lower() in TRUTH_VALUES
+            except Exception:
+                pass
+
+            try:
                 self.safe_mode = config["safe_mode"].lower() in TRUTH_VALUES
+            except Exception:
+                pass
+
+            try:
+                self.change_lock_screen = config["change_lock_screen"].lower() in TRUTH_VALUES
+            except Exception:
+                pass
+
+            try:
+                self.set_wallpaper_script = os.path.expanduser(config["set_wallpaper_script"])
+            except Exception:
+                pass
+
+            try:
+                self.get_wallpaper_script = os.path.expanduser(config["get_wallpaper_script"])
+            except Exception:
+                pass
+
+            try:
+                self.set_lock_screen_script = os.path.expanduser(config["set_lock_screen_script"])
             except Exception:
                 pass
 
@@ -127,6 +150,11 @@ class Options:
                 pass
 
             try:
+                self.wallhaven_api_key = str(config["wallhaven_api_key"]).strip()
+            except Exception:
+                pass
+
+            try:
                 self.favorites_folder = os.path.expanduser(config["favorites_folder"])
             except Exception:
                 pass
@@ -136,6 +164,16 @@ class Options:
                 self.favorites_operations = list(
                     [x.strip().split(":") for x in favorites_ops_text.split(";") if x]
                 )
+            except Exception:
+                pass
+
+            try:
+                self.wallpaper_auto_rotate = config["wallpaper_auto_rotate"].lower() in TRUTH_VALUES
+            except Exception:
+                pass
+
+            try:
+                self.wallpaper_display_mode = str(config["wallpaper_display_mode"]).strip()
             except Exception:
                 pass
 
@@ -217,6 +255,16 @@ class Options:
             try:
                 self.min_rating = int(config["min_rating"])
                 self.min_rating = max(1, min(5, self.min_rating))
+            except Exception:
+                pass
+
+            try:
+                self.name_regex_enabled = config["name_regex_enabled"].lower() in TRUTH_VALUES
+            except Exception:
+                pass
+
+            try:
+                self.name_regex = config["name_regex"]
             except Exception:
                 pass
 
@@ -479,7 +527,7 @@ class Options:
             for downloader in sorted(self.SIMPLE_DOWNLOADERS, key=lambda dl: dl.get_source_type()):
                 if downloader.get_source_type() not in source_types:
                     self.sources.append(
-                        [True, downloader.get_source_type(), downloader.get_description()]
+                        [False, downloader.get_source_type(), downloader.get_description()]
                     )
 
             self.parse_autosources()
@@ -540,7 +588,12 @@ class Options:
                         continue
                     try:
                         s = Options.parse_filter(line.strip())
-                        if not s[1].lower() in [f[1].lower() for f in self.filters]:
+                        for f in self.filters:
+                            if f[1].lower() == s[1].lower():
+                                f[2] = s[2]
+                                break
+                        else:
+                            # not found at all in filters, append it
                             self.filters.append(s)
                     except Exception:
                         logger.exception(lambda: "Cannot parse filter in filters.txt: " + line)
@@ -587,12 +640,19 @@ class Options:
         self.change_enabled = True
         self.change_on_start = False
         self.change_interval = 300
+        self.internet_enabled = True
         self.safe_mode = False
+        self.change_lock_screen = False
+
+        self.set_wallpaper_script = os.path.join(get_profile_path(), "scripts", "set_wallpaper")
+        self.get_wallpaper_script = os.path.join(get_profile_path(), "scripts", "get_wallpaper")
+        self.set_lock_screen_script = os.path.join(get_profile_path(), "scripts", "set_lock_screen")
 
         self.download_folder = os.path.join(get_profile_path(), "Downloaded")
         self.download_preference_ratio = 0.9
         self.quota_enabled = True
         self.quota_size = 1000
+        self.wallhaven_api_key = ""
 
         self.favorites_folder = os.path.join(get_profile_path(), "Favorites")
         self.favorites_operations = [
@@ -601,10 +661,13 @@ class Options:
             ["Others", "Copy"],
         ]
 
+        self.wallpaper_auto_rotate = True
+        self.wallpaper_display_mode = "os"
+
         self.fetched_folder = os.path.join(get_profile_path(), "Fetched")
         self.clipboard_enabled = False
         self.clipboard_use_whitelist = True
-        self.clipboard_hosts = "wallhaven.cc,ns223506.ovh.net,wallpapers.net,flickr.com,imgur.com,deviantart.com,interfacelift.com,vladstudio.com".split(
+        self.clipboard_hosts = "wallhaven.cc,ns223506.ovh.net,wallpapers.net,imgur.com,deviantart.com,interfacelift.com,vladstudio.com".split(
             ","
         )
 
@@ -619,6 +682,8 @@ class Options:
         self.lightness_mode = Options.LightnessMode.DARK
         self.min_rating_enabled = False
         self.min_rating = 4
+        self.name_regex_enabled = False
+        self.name_regex = ".*"
 
         self.smart_notice_shown = False
         self.smart_register_shown = False
@@ -632,12 +697,12 @@ class Options:
         self.copyto_folder = "Default"
 
         self.clock_enabled = False
-        self.clock_font = "Ubuntu Condensed, 70"
-        self.clock_date_font = "Ubuntu Condensed, 30"
-        self.clock_filter = "-density 100 -font `fc-match -f '%{file[0]}' '%CLOCK_FONT_NAME'` -pointsize %CLOCK_FONT_SIZE -gravity SouthEast -fill '#00000044' -annotate 0x0+[%HOFFSET+58]+[%VOFFSET+108] '%H:%M' -fill white -annotate 0x0+[%HOFFSET+60]+[%VOFFSET+110] '%H:%M' -font `fc-match -f '%{file[0]}' '%DATE_FONT_NAME'` -pointsize %DATE_FONT_SIZE -fill '#00000044' -annotate 0x0+[%HOFFSET+58]+[%VOFFSET+58] '%A, %B %d' -fill white -annotate 0x0+[%HOFFSET+60]+[%VOFFSET+60] '%A, %B %d'"
+        self.clock_font = "Serif 70"
+        self.clock_date_font = "Serif 30"
+        self.clock_filter = "-density 100 -font '%CLOCK_FONT_FILE' -pointsize %CLOCK_FONT_SIZE -gravity SouthEast -fill '#00000044' -annotate 0x0+[%HOFFSET+58]+[%VOFFSET+108] '%H:%M' -fill white -annotate 0x0+[%HOFFSET+60]+[%VOFFSET+110] '%H:%M' -font '%DATE_FONT_FILE' -pointsize %DATE_FONT_SIZE -fill '#00000044' -annotate 0x0+[%HOFFSET+58]+[%VOFFSET+58] '%A, %B %d' -fill white -annotate 0x0+[%HOFFSET+60]+[%VOFFSET+60] '%A, %B %d'"
 
         self.quotes_enabled = False
-        self.quotes_font = "Bitstream Charter 30"
+        self.quotes_font = "Serif 30"
         self.quotes_text_color = (255, 255, 255)
         self.quotes_bg_color = (80, 80, 80)
         self.quotes_bg_opacity = 55
@@ -670,11 +735,6 @@ class Options:
             [True, Options.SourceType.FAVORITES, "The Favorites folder"],
             [True, Options.SourceType.FETCHED, "The Fetched folder"],
             [True, Options.SourceType.FOLDER, "/usr/share/backgrounds/"],
-            [
-                True,
-                Options.SourceType.FLICKR,
-                "user:www.flickr.com/photos/peter-levi/;user_id:93647178@N00;",
-            ],
         ]
 
         self.filters = [
@@ -698,7 +758,12 @@ class Options:
             config["change_enabled"] = str(self.change_enabled)
             config["change_on_start"] = str(self.change_on_start)
             config["change_interval"] = str(self.change_interval)
+            config["internet_enabled"] = str(self.internet_enabled)
             config["safe_mode"] = str(self.safe_mode)
+            config["change_lock_screen"] = str(self.change_lock_screen)
+
+            config["set_wallpaper_script"] = Util.collapseuser(self.set_wallpaper_script)
+            config["get_wallpaper_script"] = Util.collapseuser(self.get_wallpaper_script)
 
             config["download_folder"] = Util.collapseuser(self.download_folder)
             config["download_preference_ratio"] = str(self.download_preference_ratio)
@@ -706,10 +771,15 @@ class Options:
             config["quota_enabled"] = str(self.quota_enabled)
             config["quota_size"] = str(self.quota_size)
 
+            config["wallhaven_api_key"] = str(self.wallhaven_api_key)
+
             config["favorites_folder"] = Util.collapseuser(self.favorites_folder)
             config["favorites_operations"] = ";".join(
                 ":".join(x) for x in self.favorites_operations
             )
+
+            config["wallpaper_auto_rotate"] = str(self.wallpaper_auto_rotate)
+            config["wallpaper_display_mode"] = str(self.wallpaper_display_mode)
 
             config["fetched_folder"] = Util.collapseuser(self.fetched_folder)
             config["clipboard_enabled"] = str(self.clipboard_enabled)
@@ -729,6 +799,8 @@ class Options:
             config["lightness_mode"] = str(self.lightness_mode)
             config["min_rating_enabled"] = str(self.min_rating_enabled)
             config["min_rating"] = str(self.min_rating)
+            config["name_regex_enabled"] = str(self.name_regex_enabled)
+            config["name_regex"] = str(self.name_regex)
 
             config["smart_notice_shown"] = str(self.smart_notice_shown)
             config["smart_register_shown"] = str(self.smart_register_shown)

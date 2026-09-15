@@ -8,6 +8,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 .pybuild/
+variety/locale
 
 # C extensions
 *.so
@@ -59,7 +60,6 @@ coverage.xml
 
 # Translations
 *.mo
-*.pot
 
 # Environments
 .env

@@ -1,14 +1,15 @@
 Source: variety
 Section: graphics
 Priority: optional
-Build-Depends: debhelper (>= 9),
+Build-Depends: debhelper-compat (= 13),
                dh-python,
                python3,
-               python3-distutils-extra (>= 2.18)
-Maintainer: Peter Levi <peterlevi@peterlevi.com>
-Uploaders: James Lu <james@overdrivenetworks.com>
-Standards-Version: 4.1.0
-Homepage: http://peterlevi.com/variety/
+               python3-setuptools,
+               python3-setuptools-gettext,
+Maintainer: James Lu <jlu@debian.org>
+Standards-Version: 4.7.3
+Rules-Requires-Root: no
+Homepage: https://github.com/varietywalls/variety/
 Vcs-Git: https://github.com/varietywalls/variety
 Vcs-Browser: https://github.com/varietywalls/variety
 
@@ -28,24 +29,30 @@ Depends: gir1.2-gdkpixbuf-2.0,
          python3-dbus,
          python3-gi,
          python3-gi-cairo,
+         python3-packaging,
          python3-pil,
-         python3-pkg-resources,
          python3-requests,
          ${misc:Depends},
          ${python3:Depends}
 Recommends: gir1.2-ayatanaappindicator3-0.1 | gir1.2-appindicator3-0.1,
             python3-httplib2,
-            fortune-mod
+            fortune-mod,
+            libavif-gdk-pixbuf,
+            webp-pixbuf-loader
 Suggests: feh | nitrogen,
-          gnome-shell-extension-appindicator | gnome-shell-extension-top-icons-plus
+          gnome-shell-extension-appindicator
 Description: Wallpaper changer, downloader and manager
- Variety is an open-source wallpaper changer, downloader, and manager for
- Linux. It supports a variety of sources for wallpapers, including local
- files, online services such as Unsplash, Flickr, Wallhaven.cc, NASA Astronomy Picture
- of the Day, Desktoppr.co, and media RSS feeds (Picasa, deviantART, etc.).
+ Variety is a wallpaper manager for Linux systems. It supports numerous
+ desktops and wallpaper sources, including local files and online
+ services: Wallhaven, Unsplash, and more.
+ .
+ Where supported, Variety sits as a tray icon to allow easy pausing and
+ resuming. Otherwise, its desktop entry menu provides a similar set of
+ options.
  .
  You can also install the following (suggested) packages to enhance Variety's
  functionality on certain desktop setups:
-  * feh | nitrogen: used for wallpaper changing on i3-wm, Openbox, and dwm
-  * gnome-shell-extension-top-icons-plus: adds indicators support to GNOME
-    Shell, so that Variety's tray icon can be displayed
+  * feh | nitrogen: used for wallpaper changing on window managers
+  * gnome-shell-extension-appindicator:
+    adds tray icon / indicator support to GNOME Shell, so that Variety's tray
+    icon can be displayed

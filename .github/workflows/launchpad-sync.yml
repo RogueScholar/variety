@@ -1,0 +1,38 @@
+name: Mirror to Launchpad
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - master
+      - ci/**
+    tags:
+      - '*'
+
+jobs:
+  launchpad-mirror:
+    runs-on: ubuntu-latest
+    environment: launchpad-mirror
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # Fetch all history so branches/tags push correctly
+
+      - name: Push to Launchpad master branch
+        if: github.ref_type == 'branch'
+        env:
+          LP_USER: ${{ secrets.LAUNCHPAD_USER }}
+          LP_TOKEN: ${{ secrets.LAUNCHPAD_TOKEN }}
+        run: |
+          git push --force https://${LP_USER}:${LP_TOKEN}@git.launchpad.net/variety HEAD:refs/heads/${{ github.ref_name }}
+
+      - name: Push tag to Launchpad current-release branch
+        if: github.ref_type == 'tag'
+        env:
+          LP_USER: ${{ secrets.LAUNCHPAD_USER }}
+          LP_TOKEN: ${{ secrets.LAUNCHPAD_TOKEN }}
+        run: |
+          git push --force https://${LP_USER}:${LP_TOKEN}@git.launchpad.net/variety HEAD:refs/heads/current-release --follow-tags

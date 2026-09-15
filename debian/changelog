@@ -1,3 +1,124 @@
+variety (0.9.1) resolute; urgency=medium
+
+  * Variety 0.9.1
+
+ -- James Lu <jlu@debian.org>  Sun, 30 Aug 2026 01:02:02 -0700
+
+variety (0.9.0) resolute; urgency=medium
+
+  * Variety 0.9.0
+  * Please see CHANGELOG.txt for full release notes going forward
+
+ -- James Lu <jlu@debian.org>  Sat, 02 May 2026 22:12:02 -0700
+
+variety (0.9.0~b1) noble; urgency=medium
+
+  * Improvement #795/#800: fix Python 3.14 support; switch to
+    setuptools-gettext and virtualenv for local development
+  * Remove broken Flickr and National Geographic downloaders
+  * Feature #309: Make changing lock screen backgrounds optional
+  * Feature #714: Add support for Cosmic DE
+  * Feature #814: add support for KDE Active Blur wallpaper plugin
+  * Feature #794: Add --meta CLI option to print wallpaper info
+    (Customize -> Change lock screen background automatically)
+  * Fix #728: use magick command instead of deprecated convert
+  * Fix #807: add support for newer versions of Budgie (#807)
+  * Fix #815: XFCE wallpaper cannot be set on clean installs due to
+    missing backdrop properties
+  * Fix #802: fix killing old swaybg processes
+  * Improvement #792: add .webp support
+  * Improvement #778: Update German translations
+
+ -- James Lu <jlu@debian.org>  Fri, 02 Jan 2026 16:03:35 -0800
+
+variety (0.8.13) noble; urgency=medium
+
+  * Fix #741: Fix downloading server side options (remove tiny.cc redirector)
+  * Fix #733: Fix for EarthviewDownloader
+  * Fix #704: In "smart" display mode, tile small wallpapers using ImageMagick (#727)
+  * Improvement #731: Add support for KDE 6 lockscreen
+  * Improvement #752: set_wallpaper: default to feh/nitrogen instead of hardcoding a list of WMs
+  * Feature #756: Add support for Fluxbox (via fbsetbg)
+  * Feature #619: Add regex name filter for wallpapers
+  * Update French and German translations
+
+ -- James Lu <james@overdrivenetworks.com>  Tue, 28 Jan 2025 19:01:27 -0800
+
+variety (0.8.12) jammy; urgency=medium
+
+  * Fix #672: add support for KDE Plasma 6
+
+ -- James Lu <jlu@debian.org>  Sat, 20 Jan 2024 14:37:23 -0800
+
+variety (0.8.11) jammy; urgency=medium
+
+  * Fix #652: use importlib to support Python >= 3.12
+  * Fix #424: Use only the primary monitor for thumbs window (#649)
+  * Improvement #609: filter Unsplash Plus images
+  * Improvement #604: download UHD images from Bing
+  * Feature #621: Add AVIF image format support
+  * Updated translations: Spanish (#607) and Brazilian Portuguese (#614)
+  * set_wallpaper: add support for i3-gnome (#595), Hyprland (#618), spectrwm (#626)
+  * set_wallpaper: only set Plasma wallpaper on desktops using an image background (#611)
+  * set_wallpaper: use dbus-send instead of qdbus for setting KDE wallpaper (#633)
+
+ -- James Lu <jlu@debian.org>  Fri, 27 Oct 2023 18:12:42 -0700
+
+variety (0.8.10) jammy; urgency=medium
+
+  * Bugfix #577: Fix Unsplash downloads
+  * Bugfix #553: Keep the current quote when using Image->Next
+  * Bugfix #418: on AwesomeWM, apply the same image on all monitors separately instead of stretching across them
+  * Feature #559: add support for handling Unsplash topic URLs
+  * Improvement #586: Use official API for EarthView
+
+ -- James Lu <james@overdrivenetworks.com>  Sun, 29 Jan 2023 00:51:42 -0800
+
+variety (0.8.9) focal; urgency=medium
+
+  * Bugfix #536, #537: Fix errors when there is no primary monitor configured
+
+ -- Peter Levi <peterlevi@peterlevi.com>  Thu, 23 Jun 2022 00:22:00 +0200
+
+variety (0.8.8) focal; urgency=medium
+
+  * Feature #89: Added options to select fit size / wallpaper mode. Added an image-dependent smart fit mode.
+  * Bugfix #519: Fix issues with autostart.
+  * Bugfix #534: Fix the fallback Wallhaven non-API downloading mode used for some Wallhaven URLs.
+  * Bugfix #480: Improve image searching: Avoid deep/huge folders causing Variety to ignore the other folders.
+
+ -- Peter Levi <peterlevi@peterlevi.com>  Fri, 17 Jun 2022 13:00:00 +0200
+
+variety (0.8.7) focal; urgency=medium
+
+  * Added a global switch to turn Internet connectivity for Variety off or on
+  * Wallhaven sources now use the Wallhaven API, not html parsing
+  * Support for fetching NSFW images from Wallhaven
+  * Auto-upgrade set_wallpaper/get_wallpaper scripts. Should fix issues with Dark style in GNOME.
+  * Newly added non-configurable sources will be disabled by default
+
+ -- Peter Levi <peterlevi@peterlevi.com>  Sat, 30 Apr 2022 19:00:41 +0200
+
+variety (0.8.6) focal; urgency=medium
+
+  * New source: National Geographic's photo of the day
+  * New source: ArtStation
+  * Add support for Gnome's Dark style
+  * Change default font for quotes and clock to Serif for greater compatibility
+  * Translation updates and bugfixes
+
+ -- Peter Levi <peterlevi@peterlevi.com>  Sat, 23 Apr 2022 16:10:41 +0200
+
+variety (0.8.5) focal; urgency=medium
+
+  * Fixes for Python 3.9 support
+  * Fix GH-388: Cleanup of wallpaper folder now cleans all image types
+  * Fix GH-363: We were almost never triggering purging downloads
+  * Enable support for Qtile-venv (GH-386)
+  * Updated Japanese translations
+
+ -- James Lu <james@overdrivenetworks.com>  Tue, 01 Dec 2020 22:10:41 -0800
+
 variety (0.8.4) focal; urgency=medium
 
   * Remove dead Desktoppr, ChromeOS sources (GH-323)
@@ -197,7 +318,7 @@ variety (0.5.5) precise; urgency=low
 
 variety (0.5.4ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peter@plpc>  Sun, 20 Sep 2015 00:27:37 +0300
 
@@ -242,7 +363,7 @@ variety (0.5.4) precise; urgency=low
 
 variety (0.5.3ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peter@plpc>  Wed, 05 Aug 2015 21:14:58 +0300
 
@@ -256,7 +377,7 @@ variety (0.5.3) precise; urgency=low
 
 variety (0.5.2ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peter@plpc>  Sun, 08 Feb 2015 19:58:14 +0200
 
@@ -280,7 +401,7 @@ variety (0.5.2) precise; urgency=low
 
 variety (0.5.1ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peter@plpc>  Tue, 20 Jan 2015 12:02:48 +0200
 
@@ -301,7 +422,7 @@ variety (0.5.1) precise; urgency=low
 
 variety (0.5.0ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peter@plpc>  Sun, 11 Jan 2015 14:03:59 +0200
 
@@ -388,7 +509,7 @@ variety (0.4.20) precise; urgency=low
 
 variety (0.4.19ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peter@peter>  Thu, 17 Jul 2014 15:46:32 +0300
 
@@ -430,7 +551,7 @@ variety (0.4.19) precise; urgency=low
 
 variety (0.4.18ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peter@plpc>  Tue, 15 Jul 2014 01:32:31 +0300
 
@@ -474,7 +595,7 @@ variety (0.4.18) precise; urgency=low
 
 variety (0.4.17ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peter@peter>  Fri, 09 May 2014 11:32:53 +0300
 
@@ -511,7 +632,7 @@ variety (0.4.16) precise; urgency=low
 
 variety (0.4.15ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Tue, 24 Sep 2013 23:43:57 +0300
 
@@ -562,7 +683,7 @@ variety (0.4.14) precise; urgency=low
 
 variety (0.4.13ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Tue, 11 Jun 2013 09:31:09 +0300
 
@@ -625,7 +746,7 @@ variety (0.4.13) precise; urgency=low
 
 variety (0.4.12ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Thu, 14 Feb 2013 16:32:46 +0200
 
@@ -678,7 +799,7 @@ variety (0.4.12) precise; urgency=low
 
 variety (0.4.11ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Mon, 26 Nov 2012 23:54:26 +0200
 
@@ -732,7 +853,7 @@ variety (0.4.10) precise; urgency=low
 
 variety (0.4.9ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Tue, 11 Sep 2012 00:04:04 +0300
 
@@ -763,7 +884,7 @@ variety (0.4.9) precise; urgency=low
 
 variety (0.4.8ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Mon, 03 Sep 2012 17:20:48 +0300
 
@@ -784,7 +905,7 @@ variety (0.4.8) precise; urgency=low
 
 variety (0.4.7ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Sat, 18 Aug 2012 16:39:10 +0300
 
@@ -800,7 +921,7 @@ variety (0.4.7) precise; urgency=low
 
 variety (0.4.6ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Wed, 15 Aug 2012 09:01:52 +0300
 
@@ -820,7 +941,7 @@ variety (0.4.6) precise; urgency=low
 
 variety (0.4.5ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Mon, 13 Aug 2012 10:33:29 +0300
 
@@ -851,7 +972,7 @@ variety (0.4.5) precise; urgency=low
 
 variety (0.4.4ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Sat, 11 Aug 2012 14:39:48 +0300
 
@@ -869,7 +990,7 @@ variety (0.4.4) precise; urgency=low
 
 variety (0.4.3ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Sun, 05 Aug 2012 23:30:04 +0300
 
@@ -897,7 +1018,7 @@ variety (0.4.2) precise; urgency=low
 
 variety (0.4.1ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Fri, 03 Aug 2012 02:05:34 +0300
 
@@ -998,7 +1119,7 @@ variety (0.3.11) precise; urgency=low
 
 variety (0.3.10ubuntu1) precise; urgency=low
 
-  * 
+  *
 
  -- Peter Levi <peterlevi@peterlevi.com>  Thu, 12 Jul 2012 17:01:35 +0300
 

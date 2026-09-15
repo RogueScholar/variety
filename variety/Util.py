@@ -19,6 +19,7 @@ import datetime
 import functools
 import gettext
 import hashlib
+import importlib.resources
 import json
 import logging
 import os
@@ -41,17 +42,29 @@ from variety_lib import get_version
 
 # fmt: off
 import gi  # isort:skip
-gi.require_version("GExiv2", "0.10")
+
+# Try newer GExiv2 versions first, fall back to older ones
+for _ver in ("0.16", "0.14", "0.12", "0.10"):
+    try:
+        gi.require_version("GExiv2", _ver)
+        break
+    except ValueError:
+        continue
+else:
+    raise ImportError("No compatible GExiv2 version found")
+
 gi.require_version("PangoCairo", "1.0")
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk, GdkPixbuf, GExiv2, Gio, GLib, Pango  # isort:skip
 # fmt: on
 
+_PIXBUF_SUPPORTED_FORMATS = {loader.get_name() for loader in GdkPixbuf.Pixbuf.get_formats()}
 
 USER_AGENT = "Variety Wallpaper Changer " + get_version()
 
 random.seed()
 logger = logging.getLogger("variety")
+gettext.bindtextdomain("variety", localedir=importlib.resources.files('variety') / 'locale')
 gettext.textdomain("variety")
 
 
@@ -63,8 +76,8 @@ def _(text):
 
 
 def debounce(seconds):
-    """ Decorator that will postpone a functions execution until after wait seconds
-        have elapsed since the last time it was invoked. """
+    """Decorator that will postpone a functions execution until after wait seconds
+    have elapsed since the last time it was invoked."""
 
     def decorator(fn):
         def debounced(*args, **kwargs):
@@ -317,7 +330,13 @@ class ModuleProfiler:
             )
 
 
+class InternetDisabledError(Exception):
+    pass
+
+
 class Util:
+    internet_enabled = True
+
     @staticmethod
     def sanitize_filename(filename):
         valid_chars = " ,.!-+@()_%s%s" % (string.ascii_letters, string.digits)
@@ -363,13 +382,21 @@ class Util:
 
     @staticmethod
     def is_image(filename, check_contents=False):
+        ext = os.path.splitext(filename)[1].lower()
+
+        if ext == '.webp' and 'webp' not in _PIXBUF_SUPPORTED_FORMATS:
+            logger.warning(lambda: "Skipping %s - install webp-pixbuf-loader for WebP support" % filename)
+            return False
+
+        if ext == '.avif' and 'avif' not in _PIXBUF_SUPPORTED_FORMATS:
+            logger.warning(lambda: "Skipping %s - install libavif-pixbuf-loader for AVIF support" % filename)
+            return False
+
         if Util.is_animated_gif(filename):
             return False
 
         if not check_contents:
-            return filename.lower().endswith(
-                (".jpg", ".jpeg", ".gif", ".png", ".tiff", ".svg", ".bmp")
-            )
+            return ext in (".jpg", ".jpeg", ".gif", ".png", ".tiff", ".svg", ".bmp", ".avif", ".webp")
         else:
             format, image_width, image_height = GdkPixbuf.Pixbuf.get_file_info(filename)
             return bool(format)
@@ -391,6 +418,9 @@ class Util:
     def list_files(
         files=(), folders=(), filter_func=(lambda f: True), max_files=10000, randomize=True
     ):
+        class NextFolderException(Exception):
+            pass
+
         count = 0
         for filepath in files:
             logger.debug(
@@ -405,29 +435,38 @@ class Util:
             random.shuffle(folders)
 
         for folder in folders:
-            if os.path.isdir(folder):
-                try:
-                    for root, subFolders, files in os.walk(folder, followlinks=True):
-                        if randomize:
-                            random.shuffle(files)
-                            random.shuffle(subFolders)
-                        for filename in files:
-                            logger.debug(
-                                lambda: "checking file %s against filter_func %s (root=%s)"
-                                % (filename, filter_func, root)
-                            )
-                            path = os.path.join(root, filename)
-                            if filter_func(path):
-                                count += 1
-                                if count > max_files:
-                                    logger.info(
-                                        lambda: "More than %d files in the folders, stop listing"
-                                        % max_files
-                                    )
-                                    return
-                                yield path
-                except Exception:
-                    logger.exception(lambda: "Could not walk folder " + folder)
+            folder_quota = max(20, int(max_files / len(folders)))
+            if not os.path.isdir(folder):
+                continue
+            try:
+                count_in_folder = 0
+                for root, subfolders, files in os.walk(folder, followlinks=True):
+                    subfolder_quota = max(10, int(folder_quota / (1 + len(subfolders))))
+                    if randomize:
+                        random.shuffle(files)
+                        random.shuffle(subfolders)
+                    for filename in files[:subfolder_quota]:
+                        logger.debug(
+                            lambda: "checking file %s against filter_func %s (root=%s)"
+                            % (filename, filter_func, root)
+                        )
+                        path = os.path.join(root, filename)
+                        if filter_func(path):
+                            count += 1
+                            if count > max_files:
+                                logger.info(
+                                    lambda: "More than %d files in the folders, stop listing"
+                                    % max_files
+                                )
+                                return
+                            yield path
+                            count_in_folder += 1
+                            if count_in_folder > folder_quota:
+                                raise NextFolderException
+            except NextFolderException:
+                continue
+            except Exception:
+                logger.exception(lambda: "Could not walk folder " + folder)
 
     @staticmethod
     def start_force_exit_thread(delay):
@@ -590,6 +629,25 @@ class Util:
             return image_width, image_height
 
     @staticmethod
+    def get_primary_display_size(hidpi_scaled=True):
+        display = Gdk.Display.get_default()
+        monitor = display.get_primary_monitor()
+        if not monitor:
+            monitor = display.get_monitor(0)
+
+        if monitor:
+            geometry = monitor.get_geometry()
+            scale = monitor.get_scale_factor() if hidpi_scaled else 1.0
+            return int(geometry.width * scale), int(geometry.height * scale)
+        else:
+            return Util.get_multimonitor_display_size()
+
+    @staticmethod
+    def get_multimonitor_display_size():
+        screen = Gdk.Screen.get_default()
+        return screen.get_width(), screen.get_height()
+
+    @staticmethod
     def find_unique_name(filename):
         index = filename.rfind(".")
         if index < 0:
@@ -604,7 +662,12 @@ class Util:
         return f
 
     @staticmethod
-    def request(url, data=None, stream=False, method=None, timeout=5, headers=None):
+    def request(url, data=None, stream=False, method=None, timeout=30, headers=None):
+        if not Util.internet_enabled:
+            raise InternetDisabledError("Internet access in Variety is currently disabled")
+
+        logger.debug("Request URL: %s" % url)
+
         if url.startswith("//"):
             url = "http:" + url
         headers = headers or {}
@@ -653,7 +716,7 @@ class Util:
 
     @staticmethod
     def unxor(text, key):
-        ciphertext = base64.decodestring(text)
+        ciphertext = base64.decodebytes(text)
         return "".join(chr(x ^ ord(y)) for (x, y) in zip(ciphertext, cycle(key)))
 
     @staticmethod
@@ -693,10 +756,7 @@ class Util:
     def get_scaled_size(image):
         """Computes the size to which the image is scaled to fit the screen: original_size * scale_ratio = scaled_size"""
         iw, ih = Util.get_size(image)
-        screen_w, screen_h = (
-            Gdk.Screen.get_default().get_width(),
-            Gdk.Screen.get_default().get_height(),
-        )
+        screen_w, screen_h = Util.get_primary_display_size()
         screen_ratio = float(screen_w) / screen_h
         if (
             screen_ratio > float(iw) / ih
@@ -704,22 +764,6 @@ class Util:
             return screen_w, int(round(ih * float(screen_w) / iw))
         else:  # image is "wider" than the screen ratio - need to offset horizontally
             return int(round(iw * float(screen_h) / ih)), screen_h
-
-    @staticmethod
-    def get_scale_to_screen_ratio(image):
-        """Computes the ratio by which the image is scaled to fit the screen: original_size * scale_ratio = scaled_size"""
-        iw, ih = Util.get_size(image)
-        screen_w, screen_h = (
-            Gdk.Screen.get_default().get_width(),
-            Gdk.Screen.get_default().get_height(),
-        )
-        screen_ratio = float(screen_w) / screen_h
-        if (
-            screen_ratio > float(iw) / ih
-        ):  # image is "taller" than the screen ratio - need to offset vertically
-            return int(float(screen_w) / iw)
-        else:  # image is "wider" than the screen ratio - need to offset horizontally
-            return int(float(screen_h) / ih)
 
     @staticmethod
     def gtk_to_fcmatch_font(gtk_font_name):
@@ -744,7 +788,10 @@ class Util:
 
     @staticmethod
     def compare_versions(v1, v2):
-        from pkg_resources import parse_version
+        try:
+            from packaging.version import parse as parse_version
+        except ImportError:
+            from pkg_resources import parse_version
 
         pv1 = parse_version(v1)
         pv2 = parse_version(v2)
@@ -911,10 +958,6 @@ class Util:
                 if not os.path.islink(fp):
                     total_size += os.path.getsize(fp)
         return total_size
-
-    @staticmethod
-    def get_screen_width():
-        return Gdk.Screen.get_default().get_width()
 
 
 def on_gtk(f):
