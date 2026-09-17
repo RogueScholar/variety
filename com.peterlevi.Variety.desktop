@@ -1,8 +1,15 @@
+# SPDX-FileCopyrightText: © 2012–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2015–2026, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2026, Alberto Salvia Novella <es20490446e@gmail.com>
+# SPDX-FileCopyrightText: © 2026, Peter J. Mello <admin@petermello.net>
+# SPDX-License-Identifier: GPL-3.0-only
 [Desktop Entry]
+Type=Application
+Version=1.5
 Name=Variety
-Icon=variety
-Exec=variety %U
-StartupWMClass=Variety
+GenericName=Wallpaper Changer
+GenericName[en]=Wallpaper Changer
+GenericName[pt_PT]=Trocador do fundo de ecrã
 Comment=Changes wallpapers from local and online sources
 Comment[af]=Verander muurpapiere van plaaslike en aanlyn bronne
 Comment[am]=ከአካባቢ እና ከመስመር ላይ ምንጮች ልብስ ግድግዳ ይለውጣል
@@ -82,6 +89,7 @@ Comment[pa]=ਸਥਾਨਕ ਅਤੇ ਆਨਲਾਈਨ ਸਰੋਤਾਂ ਤ�
 Comment[pl]=Zmienia tapety z lokalnych i internetowych źródeł
 Comment[ps]=د سیمه‌ییزو او آنلاین سرچینو څخه دیوال کاغذونه بدلوي
 Comment[pt]=Muda os papéis de parede de fontes locais e online
+Comment[pt_PT]=Muda os fundos de ecrã do ambiente de trabalho regularmente a partir de várias fontes locais e em linha
 Comment[quz]=Kaypi hinaspa internetpi kaq fondokunata tikrachin
 Comment[ro]=Schimbă fundalurile din surse locale și online
 Comment[ru]=Меняет обои с локальных и онлайн-источников
@@ -116,14 +124,26 @@ Comment[yo]=Ó máa ń yí ẹ̀yà ìdí àwòrán padà láti ọ̀dọ̀ orí
 Comment[yue]=由本機同網上來源轉換桌布
 Comment[zh]=从本地和在线来源更换壁纸
 Comment[zu]=Ishintsha izithombe zangemuva kusuka emithonjeni yendawo nakwi-inthanethi
-Categories=Utility;
-Type=Application
-Keywords=Wallpaper;Changer;Change;Download;Downloader;Variety;
+Keywords=change;desktop;download;downloader;
+Keywords[en]=change;desktop;download;downloader;
+Keywords[pt_PT]=mudança;papel;papéis;de parede;descarga;transferênciador;
+TryExec=/usr/bin/variety
+Exec=variety %U
+Icon=com.peterlevi.Variety
+Categories=Settings;Utility;DesktopSettings;
 MimeType=text/uri-list;x-scheme-handler/variety;x-scheme-handler/vrty;
+StartupNotify=true
+StartupWMClass=Variety
+SingleMainWindow=true
+PrefersNonDefaultGPU=false
+DBusActivatable=true
+Implements=
+Terminal=false
+NoDisplay=false
+Hidden=false
 Actions=Next;Previous;PauseResume;History;Preferences;
 
 [Desktop Action Next]
-Exec=variety --next
 Name=Next
 Name[af]=Volgende
 Name[am]=ቀጣይ
@@ -203,6 +223,7 @@ Name[pa]=ਅਗਲਾ
 Name[pl]=Następny
 Name[ps]=بل
 Name[pt]=Seguinte
+Name[pt_PT]=Seguinte
 Name[quz]=Qatiqnin
 Name[ro]=Următorul
 Name[ru]=Следующий
@@ -237,9 +258,10 @@ Name[yo]=Tókàn
 Name[yue]=下一個
 Name[zh]=下一个
 Name[zu]=Okulandelayo
+Exec=variety --next
+Icon=go-next
 
 [Desktop Action Previous]
-Exec=variety --previous
 Name=Previous
 Name[af]=Vorige
 Name[am]=ቀዳሚ
@@ -319,6 +341,7 @@ Name[pa]=ਪਿਛਲਾ
 Name[pl]=Poprzedni
 Name[ps]=پخوانی
 Name[pt]=Anterior
+Name[pt_PT]=Anterior
 Name[quz]=Ñawpaq
 Name[ro]=Anteriorul
 Name[ru]=Предыдущий
@@ -353,9 +376,10 @@ Name[yo]=Ṣáájú
 Name[yue]=上一個
 Name[zh]=上一个
 Name[zu]=Okwangaphambilini
+Exec=variety --previous
+Icon=go-previous
 
 [Desktop Action PauseResume]
-Exec=variety --toggle-pause
 Name=Pause / Resume
 Name[af]=Pouseer / Hervat
 Name[am]=አቁም / ቀጥል
@@ -435,6 +459,7 @@ Name[pa]=ਰੋਕੋ / ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ
 Name[pl]=Wstrzymaj / Wznów
 Name[ps]=ودرول / بیا پیل
 Name[pt]=Pausar / Retomar
+Name[pt_PT]=Pausar / Retomar
 Name[quz]=Samachiy / Qatichiy
 Name[ro]=Pauză / Reluare
 Name[ru]=Пауза / Продолжить
@@ -469,9 +494,10 @@ Name[yo]=Dúró / Tẹ̀síwájú
 Name[yue]=暫停 / 繼續
 Name[zh]=暂停 / 继续
 Name[zu]=Misa okwesikhashana / Qhubeka
+Exec=variety --toggle-pause
+Icon=media-playback-pause
 
 [Desktop Action History]
-Exec=variety --history
 Name=History
 Name[af]=Geskiedenis
 Name[am]=ታሪክ
@@ -551,6 +577,7 @@ Name[pa]=ਅਤੀਤ
 Name[pl]=Historia
 Name[ps]=تاریخچه
 Name[pt]=Histórico
+Name[pt_PT]=Histórico
 Name[quz]=Ñawpa ruwasqa
 Name[ro]=Istoric
 Name[ru]=История
@@ -585,9 +612,10 @@ Name[yo]=Ìtàn
 Name[yue]=歷史
 Name[zh]=历史
 Name[zu]=Umlando
+Exec=variety --history
+Icon=go-jump
 
 [Desktop Action Preferences]
-Exec=variety --preferences
 Name=Preferences
 Name[af]=Voorkeure
 Name[am]=ምርጫዎች
@@ -667,6 +695,7 @@ Name[pa]=ਤਰਜੀਹਾਂ
 Name[pl]=Preferencje
 Name[ps]=غوره توبونه
 Name[pt]=Preferências
+Name[pt_PT]=Configurações
 Name[quz]=Munasqakuna
 Name[ro]=Preferințe
 Name[ru]=Настройки
@@ -701,3 +730,5 @@ Name[yo]=Àwọn ààyò
 Name[yue]=偏好設定
 Name[zh]=首选项
 Name[zu]=Okuncamelayo
+Exec=variety --preferences
+Icon=preferences-desktop-wallpaper

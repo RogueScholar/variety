@@ -1,0 +1,5 @@
+# SPDX-FileCopyrightText: © 2026, Peter J. Mello <admin@petermello.net>
+# SPDX-License-Identifier: GPL-3.0-only
+[D-BUS Service]
+Name=com.peterlevi.Variety
+Exec=/usr/bin/variety

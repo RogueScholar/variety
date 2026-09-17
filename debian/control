@@ -1,46 +1,26 @@
 Source: variety
 Section: graphics
 Priority: optional
-Build-Depends: debhelper-compat (= 13),
-               dh-python,
-               python3,
-               python3-setuptools,
-               python3-setuptools-gettext,
 Maintainer: James Lu <jlu@debian.org>
-Standards-Version: 4.7.3
-Rules-Requires-Root: no
+Build-Depends: debhelper-compat (= 13), dh-sequence-python3, python3-all:native,
+ appstream-utils <!nocheck>, python3-setuptools, python3-setuptools-gettext
+Standards-Version: 4.7.4
 Homepage: https://github.com/varietywalls/variety/
-Vcs-Git: https://github.com/varietywalls/variety
+Vcs-Git: https://github.com/varietywalls/variety.git
 Vcs-Browser: https://github.com/varietywalls/variety
+Rules-Requires-Root: no
 
 Package: variety
 Architecture: all
-Depends: gir1.2-gdkpixbuf-2.0,
-         gir1.2-gexiv2-0.10,
-         gir1.2-glib-2.0,
-         gir1.2-gtk-3.0,
-         gir1.2-notify-0.7,
-         gir1.2-pango-1.0,
-         imagemagick,
-         python3-bs4,
-         python3-lxml,
-         python3-cairo,
-         python3-configobj,
-         python3-dbus,
-         python3-gi,
-         python3-gi-cairo,
-         python3-packaging,
-         python3-pil,
-         python3-requests,
-         ${misc:Depends},
-         ${python3:Depends}
-Recommends: gir1.2-ayatanaappindicator3-0.1 | gir1.2-appindicator3-0.1,
-            python3-httplib2,
-            fortune-mod,
-            libavif-gdk-pixbuf,
-            webp-pixbuf-loader
-Suggests: feh | nitrogen,
-          gnome-shell-extension-appindicator
+Depends: gir1.2-gdkpixbuf-2.0, gir1.2-gexiv2-0.10, gir1.2-glib-2.0,
+ gir1.2-gtk-3.0, gir1.2-notify-0.7, gir1.2-pango-1.0, imagemagick, python3-bs4,
+ python3-cairo, python3-configobj, python3-dbus, python3-gi, python3-gi-cairo,
+ python3-lxml, python3-packaging, python3-pil, python3-requests,
+ ${python3:Depends}, ${misc:Depends}
+Recommends: fortune-mod,
+ gir1.2-ayatanaappindicator3-0.1 | gir1.2-appindicator3-0.1, libavif-gdk-pixbuf,
+ python3-httplib2, webp-pixbuf-loader
+Suggests: feh | nitrogen, gnome-shell-extension-appindicator
 Description: Wallpaper changer, downloader and manager
  Variety is a wallpaper manager for Linux systems. It supports numerous
  desktops and wallpaper sources, including local files and online

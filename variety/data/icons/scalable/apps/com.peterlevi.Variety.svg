@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  SPDX-FileCopyrightText: © 2012, Peter Levi <peterlevi@peterlevi.com>
+  SPDX-FileCopyrightText: © 2026, Peter J. Mello <admin@petermello.net>
+  SPDX-License-Identifier: GPL-3.0-only
+-->
+<svg id="com.peterlevi.Variety" height="128" version="1.1" viewBox="0 0 128 128"
+     width="128" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(0 64)">
+  <rect fill="#b8bf22" height="68.2817" ry="6.2453" stroke="#000" stroke-linejoin="round" stroke-width="5.4648" width="109.091" x="9.4545" y="-45.6193" />
+  <rect height="22.1801" rx="0" ry="3.6163" stroke="#000" stroke-width="1.7327" width="33.3448" x="47.3276" y="22.8705" />
+  <rect height="7.078" ry="3.539" stroke="#000" stroke-width="2.277" width="60.9263" x="33.5368" y="45.5617" />
+  <path
+   d="M  16.1526, -7.5682
+      v  22.7534
+      l  95.1179,  0.3992
+      l   0.3930,-14.3706
+      C 115.1150, -9.3769  68.8784,-31.5890  64.8907,-23.1363
+      C  60.3677,-13.5490  51.4943,  4.6859  42.4869,  3.6089
+      c  -6.7325, -0.9557 -13.4637, -1.9097 -26.3343,-11.1771" />
+ </g>
+</svg>
