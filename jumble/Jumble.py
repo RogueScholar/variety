@@ -15,10 +15,10 @@
 ### END LICENSE
 
 import importlib.util
-import sys
 import inspect
 import logging
 import os
+import sys
 
 from .IPlugin import IPlugin
 

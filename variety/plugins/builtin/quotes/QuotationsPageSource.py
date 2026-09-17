@@ -20,6 +20,7 @@ import re
 
 import bs4
 from httplib2 import iri2uri
+
 from variety.plugins.IQuoteSource import IQuoteSource
 from variety.Util import Util, _
 

@@ -14,7 +14,7 @@
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 ### END LICENSE
 
-from gi.repository import Gtk # pylint: disable=E0611
+from gi.repository import Gtk  # pylint: disable=E0611
 
 from variety_lib.helpers import get_builder
 

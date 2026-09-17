@@ -19,9 +19,9 @@ import os
 import threading
 import webbrowser
 
+from configobj import ConfigObj
 from gi.repository import Gdk, GdkPixbuf, GObject, Gtk
 
-from configobj import ConfigObj
 from variety.ThumbsWindow import ThumbsWindow
 from variety.Util import Util, _
 from variety_lib import varietyconfig

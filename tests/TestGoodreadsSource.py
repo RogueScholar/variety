@@ -20,6 +20,7 @@ import unittest
 
 from jumble.Jumble import Jumble
 
+
 @unittest.skipIf(os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)")
 class TestGoodreadsSource(unittest.TestCase):
     def test_get_for_author(self):

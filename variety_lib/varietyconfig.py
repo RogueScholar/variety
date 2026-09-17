@@ -22,6 +22,7 @@ __version__ = "0.9.1"
 
 import importlib.resources
 
+
 def get_data_file(*path_segments):
     """Get the full path to a data file."""
 
