@@ -1,19 +1,21 @@
 #!/usr/bin/python3
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2018, James Lu <james@overdrivenetworks.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import os
 import os.path
 import shutil
@@ -24,14 +26,17 @@ from variety.ImageFetcher import ImageFetcher
 
 
 class TestImageFetcher(unittest.TestCase):
-    @unittest.skipIf(os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)")
+    @unittest.skipIf(
+        os.getenv("SKIP_DOWNLOADER_TESTS"),
+        "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)",
+    )
     def test_fetch(self):
         target_folder = "/tmp/variety/ImageFetcher"
         shutil.rmtree(target_folder, ignore_errors=True)
         os.makedirs(target_folder)
         for url in [
             "https://w.wallhaven.cc/full/dg/wallhaven-dgeqoj.jpg",
-            "http://unsplash.com/photos/7EqQ1s3wIAI/download",
+            "https://unsplash.com/photos/7EqQ1s3wIAI/download?force=true",
         ]:
             f = ImageFetcher.fetch(url, target_folder, verbose=False)
             self.assertIsNotNone(f)

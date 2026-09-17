@@ -1,19 +1,30 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2025, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2017–2026, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2018, Elon Bing <elon.bing@gmail.com>
+# SPDX-FileCopyrightText: © 2020, Danial Behzadi <danialbehzadi@users.noreply.github.com>
+# SPDX-FileCopyrightText: © 2020, Oded Arbel <oded@geek.co.il>
+# SPDX-FileCopyrightText: © 2024, sol8712 <sol8712@users.noreply.github.com>
+# SPDX-FileCopyrightText: © 2025, François Thierry M. Marelli <francois.marelli@umons.ac.be>
+# SPDX-FileCopyrightText: © 2025, didierC <crd.compte@gmail.com>
+# SPDX-FileCopyrightText: © 2026, taovinci0 <taovinci0@users.noreply.github.com>
+# SPDX-FileCopyrightText: © 2026, Diego Alvarez <dp-alvarez@users.noreply.github.com>
+# SPDX-FileCopyrightText: © 2026, Scott Nelson <scottdnelson.coffee@gmail.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012-2019, Peter Levi <peterlevi@peterlevi.com>
-# Copyright (c) 2017-2019, James Lu <james@overdrivenetworks.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import functools
 import json
 import logging
@@ -1304,15 +1315,14 @@ class VarietyWindow(Gtk.Window):
     @staticmethod
     @functools.cache
     def resolve_font_path(font_name):
-        cmd = ['fc-match', '-f', '%{file[0]}', font_name]
+        cmd = ["fc-match", "-f", "%{file[0]}", font_name]
         result = subprocess.run(cmd, check=False, text=True, stdout=subprocess.PIPE)
         font_file = ""
         if result.returncode == 0:
             font_file = result.stdout
         else:
             logger.warning(
-                lambda: f"Could not find font {font_name!r}. "
-                f"Exit code: {result.returncode}"
+                lambda: f"Could not find font {font_name!r}. " f"Exit code: {result.returncode}"
             )
         return font_file
 
@@ -1448,7 +1458,12 @@ class VarietyWindow(Gtk.Window):
                 target_file = os.path.join(
                     self.wallpaper_folder, "wallpaper-zoomed-%s.jpg" % Util.random_hash()
                 )
-                cmd = [self.get_magick_cmd(), to_set, *shlex.split(mode_data.imagemagick_cmd), target_file]
+                cmd = [
+                    self.get_magick_cmd(),
+                    to_set,
+                    *shlex.split(mode_data.imagemagick_cmd),
+                    target_file,
+                ]
                 logger.info(lambda: f"ImageMagick display mode cmd: {cmd}")
 
                 result = subprocess.run(cmd, check=False)
@@ -1579,7 +1594,9 @@ class VarietyWindow(Gtk.Window):
 
                 self.set_desktop_wallpaper(to_set, filename, refresh_level, display_mode_param)
                 if self.options.change_lock_screen:
-                    self.set_desktop_wallpaper(to_set, filename, refresh_level, display_mode_param, lock_screen=True)
+                    self.set_desktop_wallpaper(
+                        to_set, filename, refresh_level, display_mode_param, lock_screen=True
+                    )
                 self.current = filename
 
                 if self.options.icon == "Current" and self.current:
@@ -2781,8 +2798,14 @@ class VarietyWindow(Gtk.Window):
         except Exception:
             logger.exception(lambda: "Cannot remove all old wallpaper files from %s:" % folder)
 
-    def set_desktop_wallpaper(self, wallpaper, original_file, refresh_level, display_mode, lock_screen=False):
-        script = self.options.set_lock_screen_script if lock_screen else self.options.set_wallpaper_script
+    def set_desktop_wallpaper(
+        self, wallpaper, original_file, refresh_level, display_mode, lock_screen=False
+    ):
+        script = (
+            self.options.set_lock_screen_script
+            if lock_screen
+            else self.options.set_wallpaper_script
+        )
         if os.access(script, os.X_OK):
             auto = (
                 "manual"

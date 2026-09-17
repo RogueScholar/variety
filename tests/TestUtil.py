@@ -1,18 +1,21 @@
 #!/usr/bin/python3
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2018–2026, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2026, Rob Keys <rob_keys@outlook.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
 import os
@@ -35,12 +38,12 @@ class TestUtil(unittest.TestCase):
         self.assertEqual("i_m____g_.jpg", Util.sanitize_filename("i?m?*%^g_.jpg"))
 
     def test_get_local_name(self):
-        self.assertEqual("img.jpg", Util.get_local_name("http://example.com/a/img?a=b"))
-        self.assertEqual("img.jpg", Util.get_local_name("http://example.com/a/img.jpg?a=b"))
-        self.assertEqual("img.jpg", Util.get_local_name("http://example.com/a/img.jpg#x"))
-        self.assertEqual("img.jpg", Util.get_local_name("http://example.com/a/img.jpg?a=b#x"))
-        self.assertEqual("im g.jpg", Util.get_local_name("http://example.com/a/im%20g.jpg?a=b#x"))
-        self.assertEqual("im_g.jpg", Util.get_local_name("http://example.com/a/im%22g.jpg?a=b#x"))
+        self.assertEqual("img.jpg", Util.get_local_name("https://example.com/a/img?a=b"))
+        self.assertEqual("img.jpg", Util.get_local_name("https://example.com/a/img.jpg?a=b"))
+        self.assertEqual("img.jpg", Util.get_local_name("https://example.com/a/img.jpg#x"))
+        self.assertEqual("img.jpg", Util.get_local_name("https://example.com/a/img.jpg?a=b#x"))
+        self.assertEqual("im g.jpg", Util.get_local_name("https://example.com/a/im%20g.jpg?a=b#x"))
+        self.assertEqual("im_g.jpg", Util.get_local_name("https://example.com/a/im%22g.jpg?a=b#x"))
 
         self.assertTrue(len(Util.get_local_name("a" * 1000 + ".jpg")) < 255)
 
@@ -95,7 +98,7 @@ class TestUtil(unittest.TestCase):
             Util.set_rating("test.jpg", -10)
             self.assertTrue(False, "Exception expected")
         except ValueError:
-            pass  # OK
+            pass  # Okay
 
     def test_find_unique_name(self):
         self.assertEqual("/etc/fstab_1", Util.find_unique_name("/etc/fstab"))
@@ -156,9 +159,9 @@ class TestUtil(unittest.TestCase):
             self.assertEqual(32, len(x))
 
     def test_get_file_icon_name(self):
-        self.assertEqual("folder", Util.get_file_icon_name("/xxx/yyy/zzz"))  # nonexistent
+        self.assertEqual("folder", Util.get_file_icon_name("/xxx/yyy/zzz"))  # Non-existent
         self.assertEqual("user-home", Util.get_file_icon_name("~"))
-        # Icon name depends on desktop environment - accept both specific and generic
+        # Icon name depends on desktop environment, accept both specific and generic
         icon_name = Util.get_file_icon_name("~/Pictures")
         self.assertIn(icon_name, ["folder-pictures", "folder"])
 
@@ -173,7 +176,10 @@ class TestUtil(unittest.TestCase):
 
         self.assertEqual([20, 30], list(Util.safe_map(f, [1, 5, 20, 10, 30, 4])))
 
-    @unittest.skipIf(os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping networked tests (SKIP_DOWNLOADER_TESTS is set)")
+    @unittest.skipIf(
+        os.getenv("SKIP_DOWNLOADER_TESTS"),
+        "Skipping networked tests (SKIP_DOWNLOADER_TESTS is set)",
+    )
     def test_fetch(self):
         resp = Util.fetch("//google.com")
         self.assertTrue(len(resp) > 0)
@@ -199,13 +205,16 @@ class TestUtil(unittest.TestCase):
         self.assertTrue(Util.is_animated_gif("animated.gif"))
         self.assertFalse(Util.is_animated_gif("not-animated.gif"))
 
-    @unittest.skipIf(os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)")
+    @unittest.skipIf(
+        os.getenv("SKIP_DOWNLOADER_TESTS"),
+        "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)",
+    )
     def test_is_dead_or_not_image(self):
         self.assertTrue(Util.is_dead_or_not_image(None))
         self.assertTrue(Util.is_dead_or_not_image("not a URL"))
-        self.assertTrue(Util.is_dead_or_not_image("http://www.cnn.com/"))
+        self.assertTrue(Util.is_dead_or_not_image("https://www.cnn.com/"))
         self.assertTrue(Util.is_dead_or_not_image("http://vrty.org/"))
-        self.assertTrue(Util.is_dead_or_not_image("http://www.google.com/dejkjdrelkjflkrejfjre"))
+        self.assertTrue(Util.is_dead_or_not_image("https://www.google.com/dejkjdrelkjflkrejfjre"))
         self.assertFalse(
             Util.is_dead_or_not_image(
                 "https://farm8.staticflickr.com/7133/7527967878_85fea93129_o.jpg"
@@ -224,8 +233,10 @@ class TestUtil(unittest.TestCase):
         )
 
     def test_debounce(self):
-        """ Test that the increment function is being debounced.
-        The counter should only be incremented once 10 seconds after the last call to the function """
+        """Test that the increment function is being debounced.
+
+        The counter should only be incremented once ten seconds after the last call to the function.
+        """
         count = [0]
 
         @debounce(0.6)

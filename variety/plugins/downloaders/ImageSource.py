@@ -1,18 +1,19 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2018–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import abc
 import collections
 import logging
@@ -37,16 +38,16 @@ class ImageSource(IVarietyPlugin, metaclass=abc.ABCMeta):
         self.variety = None
 
     def set_variety(self, variety):
-        """
-        Sets the VarietyWindow instance. This is called after Jumble creates the instance, before
-        it is actually used.
+        """Set the VarietyWindow instance name.
+
+        This is called after Jumble creates the instance, but before it is actually used.
         :param variety: the instance of VarietyWindow
         """
         self.variety = variety
 
     def get_variety(self):
-        """
-        Returns the VarietyWindow instance, if set via set_variety(), or None.
+        """Return the VarietyWindow instance, if set by set_variety(), or None.
+
         This is available before the source is actually used.
         :return the instance of VarietyWindow
         """
@@ -54,37 +55,37 @@ class ImageSource(IVarietyPlugin, metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def get_source_type(self):
-        """
-        Returns a key for this source that will be used to identify it in
-        configuration files, and will be saved in image metadata under Xmp.variety.sourceType.
-        Variety will use this source type to find which plugin can handle a particular
-        saved image source configuration, so this should not collide between different image
-        source plugins.
+        """Return key for a source to identify it in configuration files.
+
+        This is saved in image metadata under Xmp.variety.sourceType for later use when determining
+        which plugin can handle a particular saved image source configuration, and so should not
+        collide between different image source plugins.
         :return: source type, e.g. "flickr", "unsplash", etc.
         """
         pass
 
     def get_source_name(self):
-        """
-        Returns the value that will go into Xmp.variety.sourceName in image metadata.
-        This will also be shown in UI.
-        This could be the name of the service that is used to fetch images, e.g. Flickr.
-        Default implementation is to return source_type, with uppercase first letter.
+        """Return value to be set for Xmp.variety.sourceName in image metadata.
+
+        This is also shown in the UI, set to the service that is used to fetch images, e.g. Flickr.
+        The default implementation is to return source_type, with an uppercase first letter.
         :return: source name, e.g. "Flickr", "Unsplash", etc.
         """
         source_type = self.get_source_type()
         return source_type[0].upper() + source_type[1:]
 
     def needs_internet(self):
-        """
-        Does this configurable image source need internet in order to fetch new images?
+        """Report whether a configurable image source needs the internet.
+
+        A Boolean value indicating if a source needs a working network link with DNS resolution in
+        order to fetch new images.
         :return: True or False
         """
         return True
 
     def on_image_set_as_wallpaper(self, img, meta):
-        """
-        Called when a wallpaper downloaded from this source was used as a wallpaper.
+        """Call for wallpapers downloaded from a particular source.
+
         This can be used to call back the image provider for stats purposes.
         :param img path to the image file
         :param meta image metadata
@@ -92,8 +93,8 @@ class ImageSource(IVarietyPlugin, metaclass=abc.ABCMeta):
         pass
 
     def on_image_favorited(self, img, meta):
-        """
-        Called when a wallpaper downloaded from this source was copied or moved to favorites.
+        """Call for images added to Favorites from a particular source.
+
         This can be used to call back the image provider for stats purposes.
         :param img path to the image file
         :param meta image metadata
@@ -101,35 +102,37 @@ class ImageSource(IVarietyPlugin, metaclass=abc.ABCMeta):
         pass
 
     def get_default_throttling(self):
-        """
-        Throttling serves to avoid overloading servers when multiple Variety users use the source 
-        simultaneously. It is normally controlled via a remote config, but defaults should be 
-        provided for the cases when the remote config is not set or cannot be fetched.
-        All downloaders for the same source are throttled together.
+        """Report the default upper bounds for image fetches per hour.
+
+        Throttling serves to avoid overloading servers when multiple Variety instances use a source
+        simultaneously. It is normally controlled via a remote configuration, but defaults should
+        be provided for occasions when one is not set or cannot be fetched. All downloaders for the
+        same source are throttled together.
         :return: a Throttling namedtuple
         """
         return Throttling(max_downloads_per_hour=None, max_queue_fills_per_hour=None)
 
     def get_server_options_key(self):
-        """
-        Key under the the server-side throttling options where the configs for this source reside.
-        By default it is the same as the source type.
+        """Show the key in server-side throttling options containing the configuration for a source.
+
+        By default, it is the same as the source type.
         :return: key in remote server options for this source, e.g. "unsplash_v2"
         """
         return self.get_source_type()
 
     def get_server_options(self):
-        """
-        Returns the server options for this source.
-        The default implementation reads from get_variety().server_options, i.e. it uses Variety's central
-        serverside options, but you could override this method to read from elsewhere.
+        """Return the server options for a source.
+
+        The default implementation reads from get_variety().server_options, i.e. using Variety's
+        central server-side options, but this can be overridden to read from elsewhere.
         :return: remotely-configured options for this image source
         """
         return self.get_variety().server_options[self.get_server_options_key()]
 
     def get_throttling(self):
-        """
-        Returns the actual throttling, taking remote configuration into account (if available)
+        """Return the current throttling levels for a source.
+
+        This should take remote configurations into account as well (if available).
         """
         defaults = self.get_default_throttling()
 

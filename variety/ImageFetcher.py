@@ -1,18 +1,23 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2018–2025, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2023, TyK <tisyang@gmail.com>
+# SPDX-FileCopyrightText: © 2025, Oded Arbel <oded@geek.co.il>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import logging
 import os
 import urllib.parse
@@ -37,8 +42,10 @@ class ImageFetcher:
                         if h and p.netloc.lower().find(h) >= 0:
                             return True
                 else:
-                    return p.path.lower().endswith((".jpg", ".jpeg", ".png", ".tiff", ".avif", ".webp"))
-                    # skip gif - they are usually small images
+                    # Skip GIFs, they are usually small images.
+                    return p.path.lower().endswith(
+                        (".jpg", ".jpeg", ".png", ".tiff", ".avif", ".webp")
+                    )
             return False
         except Exception:
             return False
@@ -59,7 +66,7 @@ class ImageFetcher:
         try:
             logger.info(lambda: "Trying to fetch URL %s to %s " % (url, to_folder))
             if verbose:
-                progress_reporter(_("Fetching"), url)
+                progress_reporter(_("Fetching…"), url)
 
             if url.startswith("javascript:"):
                 if verbose:
@@ -94,11 +101,12 @@ class ImageFetcher:
             if os.path.exists(filename):
                 m = Util.read_metadata(filename)
                 if m and m.get("imageURL") == url:
-                    logger.info(lambda: "Local file already exists (%s)" % filename)
+                    logger.info(lambda: "Local file already exists. (%s)" % filename)
                     return filename
                 else:
                     logger.info(
-                        lambda: "File with same name already exists, but from different imageURL; renaming new download"
+                        lambda: "File with same name already exists, but from different imageURL; "
+                        "renaming new download…"
                     )
                     filename = Util.find_unique_name(filename)
 
@@ -120,7 +128,7 @@ class ImageFetcher:
 
             if img.size[0] < 400 or img.size[1] < 400:
                 # too small - delete and do not use
-                progress_reporter(_("Image too small, ignoring it"), url)
+                progress_reporter(_("Image too small; ignoring it."), url)
                 Util.safe_unlink(local_filepath_partial)
                 return None
 
@@ -145,14 +153,15 @@ class ImageFetcher:
             if reported:
                 if isinstance(e, HTTPError) and e.response.status_code in (403, 404):
                     progress_reporter(
-                        _("Sorry, got %s error...") % str(e.response.status_code),
-                        _("This means the link is no longer valid"),
+                        _("Sorry, got %s error…") % str(e.response.status_code),
+                        _("This means the link is no longer valid."),
                     )
                 else:
                     progress_reporter(
-                        _("Fetch failed for some reason"),
+                        _("Fetch failed for unknown reason."),
                         _(
-                            "To get more information, please run Variety from terminal with -v option and retry the action"
+                            "To get more information, please run Variety from the terminal with "
+                            "-v option and retry the action."
                         ),
                     )
             return None

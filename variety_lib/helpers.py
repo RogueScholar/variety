@@ -1,20 +1,23 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2017–2018, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
-"""Helpers for an Ubuntu application."""
+"""Provide helpers for application instances in Ubuntu environments."""
+
 import logging
 import os
 
@@ -23,13 +26,12 @@ from .varietyconfig import get_data_file
 
 
 def get_builder(builder_file_name):
-    """Return a fully-instantiated Gtk.Builder instance from specified ui
-    file
+    """Return a fully-instantiated Gtk.Builder instance from specified UI file.
 
-    :param builder_file_name: The name of the builder file, without extension.
-        Assumed to be in the 'ui' directory under the data path.
+    :param builder_file_name: The name of the builder file, without extension;
+                              assumed to be in 'ui' directory under data path.
     """
-    # Look for the ui file that describes the user interface.
+    # Look for the UI file that describes the user interface.
     ui_filename = get_data_file("ui", "%s.ui" % (builder_file_name,))
     if not os.path.exists(ui_filename):
         ui_filename = None
@@ -50,15 +52,15 @@ def get_media_file(media_file_name):
 
 
 def get_help_uri(page=None):
-    # help_uri from source tree - default language
+    # help_uri from source tree - language-agnostic using C locale
     here = os.path.dirname(__file__)
     help_uri = os.path.abspath(os.path.join(here, "..", "help", "C"))
 
     if not os.path.exists(help_uri):
-        # installed so use gnome help tree - user's language
+        # Installed in system path, so use GNOME help tree with user's locale.
         help_uri = "variety"
 
-    # unspecified page is the index.page
+    # If the page is unspecified, use index.page.
     if page is not None:
         help_uri = "%s#%s" % (help_uri, page)
 
@@ -73,10 +75,10 @@ def show_uri(parent, link):
 
 
 def alias(alternative_function_name):
-    """see http://www.drdobbs.com/web-development/184406073#l9"""
+    """See <http://www.drdobbs.com/web-development/184406073#l9>."""
 
     def decorator(function):
-        """attach alternative_function_name(s) to function"""
+        """Attach alternative_function_name(s) to a function."""
         if not hasattr(function, "aliases"):
             function.aliases = []
         function.aliases.append(alternative_function_name)

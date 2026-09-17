@@ -1,21 +1,20 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
-"""this dialog adjusts values in gsettings
-"""
+"""A dialog that adjusts values in GNOME's GSettings."""
 
 import logging
 
@@ -30,9 +29,8 @@ class PreferencesDialog(Gtk.Dialog):
     __gtype_name__ = "PreferencesDialog"
 
     def __new__(cls, parent):
-        """Special static method that's automatically called by Python when 
-        constructing a new instance of this class.
-        
+        """Static method called when constructing a new instance of this class.
+
         Returns a fully instantiated PreferencesDialog object.
         """
         builder = get_builder("PreferencesVarietyDialog")
@@ -41,14 +39,12 @@ class PreferencesDialog(Gtk.Dialog):
         return new_object
 
     def finish_initializing(self, builder, parent):
-        """Called while initializing this instance in __new__
+        """Called while initializing this instance in __new__.
 
-        finish_initalizing should be called after parsing the ui definition
-        and creating a PreferencesDialog object with it in order to
-        finish initializing the start of the new PerferencesVarietyDialog
-        instance.
-        
-        Put your initialization code in here and leave __init__ undefined.
+        finish_initalizing should be called after parsing the UI definition and
+        creating a PreferencesDialog object with it to finish initializing the
+        start of the new PerferencesVarietyDialog instance. Put your
+        initialization code in here and leave __init__ undefined.
         """
 
         # Get a reference to the builder and set up the signals.
@@ -56,7 +52,7 @@ class PreferencesDialog(Gtk.Dialog):
         self.builder = builder
         self.ui = builder.get_ui(self, True)
 
-        # code for other initialization actions should be added here
+        # Code for other initialization actions should be added here.
 
     def on_btn_close_clicked(self, widget, data=None):
         self.hide()

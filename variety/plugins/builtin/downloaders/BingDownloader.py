@@ -1,18 +1,19 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import logging
 import random
 from datetime import datetime
@@ -28,9 +29,8 @@ random.seed()
 
 class BingDownloader(SimpleDownloader):
     DESCRIPTION = _("Bing Photo of the Day")
-    BING_JSON_URL = (
-        "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=100&mkt=en-US"
-    )  # n=100, but max 8 images are actually returned... Pity.
+    # n=100, but a max of eight images are actually returned…what a pity.
+    BING_JSON_URL = "https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=100&mkt=en-US"
 
     @classmethod
     def get_info(cls):
@@ -62,7 +62,7 @@ class BingDownloader(SimpleDownloader):
         for item in s["images"]:
             try:
                 if not item["wp"]:
-                    # not marked as a wallpaper
+                    # Not marked as a wallpaper
                     continue
 
                 image_url = "https://www.bing.com" + item["urlbase"] + "_UHD.jpg"
@@ -87,7 +87,7 @@ class BingDownloader(SimpleDownloader):
                 }
                 queue.append((src_url, image_url, extra_metadata))
             except:
-                logger.exception(lambda: "Could not process an item in the Bing json result")
+                logger.exception(lambda: "Could not process an item in the Bing JSON result.")
 
         random.shuffle(queue)
         return queue

@@ -1,18 +1,21 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2017–2025, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2019, Pedro Romano <pedro@paparomeo.net>
+# SPDX-FileCopyrightText: © 2026, Peter J. Mello <admin@petermello.net>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012-2018, Peter Levi <peterlevi@peterlevi.com>
-# Copyright (c) 2017-2018, James Lu <james@overdrivenetworks.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
 import logging
@@ -30,9 +33,9 @@ from gi.repository import GObject, Gtk  # pylint: disable=E0611
 
 
 class SafeLogger(logging.Logger):
-    """
-    Fixes UnicodeDecodeErrors errors in logging calls:
-    Accepts lambda as well string messages. Catches errors when evaluating the passed lambda.
+    """Fix UnicodeDecodeError occurrences in logging calls.
+
+    Accepts lambda as well string messages, catching errors when evaluating the passed lambda.
     """
 
     def makeRecord(self, name, level, fn, lno, msg, *args, **kwargs):
@@ -49,7 +52,7 @@ class SafeLogger(logging.Logger):
                 logging.getLogger("variety").exception(
                     "Errors while logging. Locale info: %s" % locale_info
                 )
-                # TODO gather and log more info here
+                # TODO: Gather and log more info here <PL 2015-01-11>
             except:
                 pass
             new_msg = "Errors while logging. Locale info: %s" % locale_info
@@ -60,25 +63,20 @@ class SafeLogger(logging.Logger):
 logging.setLoggerClass(SafeLogger)
 
 
-# these must be after the setLoggerClass call, as they obtain the variety logger
+# These must occur after the setLoggerClass call, as they obtain the Variety logger.
 from variety import ThumbsManager, ThumbsWindow, VarietyWindow
 from variety.profile import get_profile_id, get_profile_path, is_default_profile, set_profile_path
 from variety.Util import ModuleProfiler, Util, _, safe_print
 
-# # Change default encoding from ascii to UTF8 - works OK on Linux and prevents various UnicodeEncodeErrors/UnicodeDecodeErrors
-# Still, generally considerd bad practice, may cause some deep hidden errors, as various Python stuff depends on it
-# reload(sys)
-# sys.setdefaultencoding('UTF8')
-
 
 def _get_dbus_key():
-    """
-    DBus key for Variety.
-    Variety uses a different key per profile, so several instances can run simultaneously if
-    running with different profiles.
-    Command any instance from the terminal by passing explicitly the same --profile options as it
-    was started with.
-    :return: the dbus key
+    """Set D-Bus key for Variety.
+
+    Variety uses a different D-Bus keys per profile, so several instances can run simultaneously if
+    running with different profiles. Commands any instance from the terminal by explicitly passing
+    the same --profile options as it was started with.
+
+    :return: the D-Bus key
     """
     if is_default_profile():
         return "com.peterlevi.Variety"
@@ -117,10 +115,10 @@ def _check_quit():
         GObject.timeout_add(1000, _check_quit)
         return
 
-    logging.getLogger("variety").info("Terminating signal received, quitting...")
+    logging.getLogger("variety").info("Terminating signal received, quitting…")
     safe_print(
-        _("Terminating signal received, quitting..."),
-        "Terminating signal received, quitting...",
+        _("Terminating signal received, quitting…"),
+        "Terminating signal received, quitting…",
         file=sys.stderr,
     )
 
@@ -131,7 +129,7 @@ def _check_quit():
 
 
 def _set_up_logging(verbose):
-    # add a handler to prevent basicConfig
+    # Add a handler to prevent basicConfig
     root = logging.getLogger()
     null_handler = logging.NullHandler()
     root.addHandler(null_handler)
@@ -148,7 +146,7 @@ def _set_up_logging(verbose):
         logger_file.setFormatter(formatter)
         logger.addHandler(logger_file)
     except Exception:
-        logger.exception("Could not create file logger")
+        logger.exception("Could not create log file")
 
     lib_logger = logging.getLogger("variety_lib")
     lib_logger_sh = logging.StreamHandler()
@@ -160,11 +158,11 @@ def _set_up_logging(verbose):
     if verbose >= 2:
         logger.setLevel(logging.DEBUG)
     elif not verbose:
-        # If we're not in verbose mode, only log these messages to file. This prevents
-        # flooding syslog and/or ~/.xsession-errors depending on how variety was started:
-        # (https://bugs.launchpad.net/variety/+bug/1685003)
-        # XXX: We should /really/ make the internal debug logging use logging.debug,
-        # this is really just a bandaid patch.
+        # If we're not in verbose mode only send these messages to the log file, so as not to flood
+        # syslog and/or ~/.xsession-errors (depending on how variety was started); see
+        # <https://bugs.launchpad.net/variety/+bug/1685003>
+        # FIXME: We should /really/ make the internal debug logging use logging.debug, as this is
+        # really just a band-aid patch. <PL 2019-07-14>
         logger_sh.setLevel(logging.WARNING)
 
     if verbose >= 3:
@@ -174,50 +172,46 @@ def _set_up_logging(verbose):
 def main():
     if os.geteuid() == 0:
         print(
-            'Variety is not supposed to run as root.\n'
-            'You should NEVER run desktop apps as root, unless they are supposed to make '
-            'system-global changes and you know very well what you are doing.\n'
-            'Please run it with your normal user.\n'
-            '\n'
-            'If you are trying to run as root because Variety does not start at all with your normal '
-            'user, you may be hitting a file permission issue or a bug.\n'
-            'Here is what to do to troubleshoot:\n'
-            '\n'
+            "Variety is not supposed to run as root.\n"
+            "You should NEVER run desktop apps as root, unless they are supposed to make system-"
+            "wide changes and you know very well what you are doing.\n"
+            "Please run it as your normal user instead.\n\n"
+            "If you are trying to run as root because Variety does not start at all from your "
+            "normal user account, you may be encountering a file permissions issue or a bug.\n"
+            "Here is what to do to troubleshoot:\n\n"
             '1. Open a terminal and run "variety -v" with your normal user.\n'
-            'Look for exceptions and hints in the log for what the problem might be.\n'
-            '\n'
-            '2. You may try to rename ~/.config/variety to ~/.config/variety_bak and try again.\n'
-            'This will have Variety start from a clean state.\n'
-            'Your old config and images will remain in variety_bak\n'
-            '\n'
-            '3. If none of these help, open a bug in https://github.com/varietywalls/variety/issues '
-            'and follow the instructions there.'
+            "Look for exceptions and hints in the log for what the problem might be.\n\n"
+            "2. You can try renaming the ~/.config/variety folder to ~/.config/variety_bak.\n"
+            "This will start Variety with a clean slate of configuration defaults and keep your "
+            "existing settings and images for selective restoration from variety_bak.\n\n"
+            "3. If none of these help, create an issue report at "
+            "https://github.com/varietywalls/variety/issues/new for assistence."
         )
         sys.exit(1)
 
-    # Ctrl-C
+    # Ctrl+C
     signal.signal(signal.SIGINT, _sigint_handler)
     signal.signal(signal.SIGTERM, _sigint_handler)
     signal.signal(signal.SIGQUIT, _sigint_handler)
 
     arguments = sys.argv[1:]
 
-    # validate arguments
+    # Validate arguments
     from variety import VarietyOptionParser
 
     options, args = VarietyOptionParser.parse_options(arguments)
     set_profile_path(options.profile)
     Util.makedirs(get_profile_path())
 
-    # ensure singleton per profile
+    # Ensure singleton per profile
     bus = dbus.SessionBus()
     dbus_key = _get_dbus_key()
     if bus.request_name(dbus_key) != dbus.bus.REQUEST_NAME_REPLY_PRIMARY_OWNER:
         if not arguments or (options.profile and len(arguments) <= 2):
             arguments = ["--preferences"]
         safe_print(
-            _("Variety is already running. Sending the command to the running instance."),
-            "Variety is already running. Sending the command to the running instance.",
+            _("Variety is already running; forwarding command to the existing instance."),
+            "Variety is already running; forwarding command to the existing instance.",
             file=sys.stderr,
         )
         method = bus.get_object(dbus_key, DBUS_PATH).get_dbus_method("process_command")
@@ -226,16 +220,15 @@ def main():
             safe_print(result)
         return
 
-    # set up logging
-    # set_up_logging must be called after the DBus checks, only by one running instance,
-    # or the log file can be corrupted
+    # set_up_logging must be called after the D-Bus checks, by only one running instance, or the
+    # log file can be corrupted.
     _set_up_logging(options.verbose)
     logging.getLogger("variety").info(lambda: "Using profile folder {}".format(get_profile_path()))
 
     if options.verbose >= 3:
         profiler = ModuleProfiler()
         if options.verbose >= 5:
-            # The main variety package
+            # The main Variety package
             pkgname = os.path.dirname(__file__)
             profiler.log_path(pkgname)
 
@@ -243,7 +236,7 @@ def main():
                 # Track variety_lib
                 profiler.log_path(pkgname + "_lib")
         else:
-            # Cherry-picked log items carried over from variety 0.6.x
+            # Cherry-picked log items carried over from variety v0.6.x
             profiler.log_class(VarietyWindow.VarietyWindow)
 
             if options.verbose >= 4:

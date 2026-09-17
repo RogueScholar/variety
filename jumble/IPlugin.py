@@ -1,31 +1,31 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2013–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import abc
 
 
 class IPlugin(object, metaclass=abc.ABCMeta):
-    """
-    The most simple interface to be inherited when creating a plugin.
-    """
+    """The most simple interface to be inherited when creating a plugin."""
 
     @classmethod
     @abc.abstractmethod
     def get_info(cls):
-        """
-        Returns the basic info about the plugin. Please make sure the name is unique among all Variety plugins
+        """Return basic information about a plugin.
+
+        Please make sure that the name is unique among all Variety plugins.
         Format:
         return {
            "name": "Sample name",
@@ -38,37 +38,37 @@ class IPlugin(object, metaclass=abc.ABCMeta):
         pass
 
     def __init__(self):
-        """
-        All plugins must have a default constructor with no parameters.
-        Remember to call super.
+        """A default plugin constructor with no parameters.
+
+        Remember to call super with this.
         """
         self.active = False
 
-        # These will be filled in by Jumble.load() and available before the first activate() call
+        # These are filled in by Jumble.load() and made available before the first activate() call.
         self.jumble = None
-        self.path = None  # Path to the plugin python file
+        self.path = None  # Path to a plugin's Python source file
         self.folder = (
-            None
-        )  # Folder where plugin is located (can be used for loading UI resources, etc.).
-        # This folder may be read-only. A separate config folder convention should be used to store config files.
+            None  # The folder where plugin is located (can be used for loading UI resources, etc.)
+        )
+        # Folder may be read-only and require using another config folder convention for storage.
 
     def activate(self):
-        """
-        Called at plugin activation. Please do not allocate large portions of memory or resources before this is called.
-        Remember to call super first.
-        This method can be called multiple times within a session.
-        It may be called when the plugin is already active - in this case it should simply return.
+        """Activation called for a plugin.
+
+        Please do not allocate large amounts of memory or other resources before this is called,
+        and remember to call super first. This method can be called multiple times per session,
+        even when a plugin is already active - in which case it should return silently.
         """
         if self.active:
             return
         self.active = True
 
     def deactivate(self):
-        """
-        Called when the plugin is disabled. Please free used memory and resources here.
-        Remember to call super first.
-        This method can be called multiple times within a session.
-        It may be called when the plugin is already inactive - in this case it should simply return.
+        """Deactivation call for a plugin, leaving it disabled.
+
+        Please free its used memory and resources here, remembering to call super first. This can
+        be called multiple times per session, including when a plugin is already disabled - in
+        which case it should return silently.
         """
         self.active = False
 

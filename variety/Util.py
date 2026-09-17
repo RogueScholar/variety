@@ -1,18 +1,25 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2018–2025, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2020, Alexander Kapshuna <kapsh@kap.sh>
+# SPDX-FileCopyrightText: © 2023, TyK <tisyang@gmail.com>
+# SPDX-FileCopyrightText: © 2025, Oded Arbel <oded@geek.co.il>
+# SPDX-FileCopyrightText: © 2026, Martin Gansser <martinkg@fedoraproject.org>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import base64
 import codecs
 import datetime
@@ -43,7 +50,7 @@ from variety_lib import get_version
 # fmt: off
 import gi  # isort:skip
 
-# Try newer GExiv2 versions first, fall back to older ones
+# Try newer GExiv2 versions first, falling back to older versions if necessary.
 for _ver in ("0.16", "0.14", "0.12", "0.10"):
     try:
         gi.require_version("GExiv2", _ver)
@@ -51,7 +58,7 @@ for _ver in ("0.16", "0.14", "0.12", "0.10"):
     except ValueError:
         continue
 else:
-    raise ImportError("No compatible GExiv2 version found")
+    raise ImportError("No compatible GExiv2 version found.")
 
 gi.require_version("PangoCairo", "1.0")
 gi.require_version('Gdk', '3.0')
@@ -64,7 +71,7 @@ USER_AGENT = "Variety Wallpaper Changer " + get_version()
 
 random.seed()
 logger = logging.getLogger("variety")
-gettext.bindtextdomain("variety", localedir=importlib.resources.files('variety') / 'locale')
+gettext.bindtextdomain("variety", localedir=importlib.resources.files("variety") / "locale")
 gettext.textdomain("variety")
 
 
@@ -76,8 +83,11 @@ def _(text):
 
 
 def debounce(seconds):
-    """Decorator that will postpone a functions execution until after wait seconds
-    have elapsed since the last time it was invoked."""
+    """Postpone a function's execution for a finite duration since it last ran.
+
+    Introduces a delay measured in seconds which a function must let elapse
+    since its last invocation before being executed again.
+    """
 
     def decorator(fn):
         def debounced(*args, **kwargs):
@@ -86,7 +96,7 @@ def debounce(seconds):
 
             try:
                 debounced.t.cancel()
-            except (AttributeError):
+            except AttributeError:
                 pass
             debounced.t = threading.Timer(seconds, call_it)
             debounced.t.start()
@@ -97,20 +107,20 @@ def debounce(seconds):
 
 
 class throttle(object):
-    """
-    Decorator that prevents a function from being called more than once every time period. Allows for a trailing call.
+    """Prevent function calls from occurring more than once per time interval.
 
-    To create a function that cannot be called more than once a minute:
-
+    This decorator also allows for a trailing call. To create a function that
+    cannot be called more than once a minute:
         @throttle(seconds=1)
         def my_fun():
             pass
     """
 
     def __init__(self, seconds=0, trailing_call=False):
-        """
-        seconds - throttle interval in seconds
-        trailing - if True, there will always be a call seconds after the last call
+        """Establish a network throttle for an image source.
+
+        seconds       - throttle interval, in seconds
+        trailing_call - if True, always call function n seconds after last call
         """
         self.seconds = seconds
         self.trailing_call = trailing_call
@@ -140,9 +150,9 @@ class throttle(object):
 
 
 def cache(ttl_seconds=100 * 365 * 24 * 3600, debug=False):
-    """
-    caching decorator with TTL. Keep in mind the cache is per-process.
-    TODO: There is no process for cache invalidation now. Introduce memcached and use it instead.
+    """Define a per-process cache with time-to-live defined in seconds.
+
+    TODO: Institute cache invalidation, perhaps via memcached. <PL 2016-08-03>
     :param ttl_seconds: TTL in seconds before the cache entry expires
     :param debug: use True to log cache hits (with DEBUG level)
     """
@@ -207,28 +217,24 @@ class VarietyMetadata(GExiv2.Metadata):
 
 
 class ModuleProfiler:
-    # How deep in other modules' code we should profile
+    # The depth within other modules' code that should be profiled.
     MAX_NONTARGET_DEPTH = 1
 
     def __init__(self):
-        """
-        Initializes the module profiler.
-        """
+        """Initialize the module profiler."""
         self.target_paths = []
 
-        # Track how far deep we are in functions outside our target packages
-        # The intent is to only log the first call to outside methods without following them further
+        # Track how deep we are in functions outside our target packages. The intent is to only log
+        # the first call to outside methods without following them further.
         self.nontarget_depths = {}
 
     def log_class(self, cls):
-        """
-        Adds the given class' module to the list of modules to be profiled.
-        """
+        """Add the given class module to the list of modules to be profiled."""
         modulename = cls.__module__
         if modulename not in sys.modules:
             logger.error(
-                "ModuleProfiler: Could not add module %r (class %s) to the list of modules to trace - "
-                "has it been imported entirely?",
+                "ModuleProfiler: Could not add module %r (class %s) to the list of modules to "
+                "trace. Has it been fully imported?",
                 modulename,
                 cls,
             )
@@ -239,26 +245,20 @@ class ModuleProfiler:
         self.log_module(module, request=cls)
 
     def log_module(self, module, request=None):
-        """
-        Adds the given module to the list of modules to be profiled.
-        """
+        """Add the given module to the list of modules to be profiled."""
         self.log_path(module.__file__, request=request)
 
     def log_path(self, path, request=None):
-        """
-        Adds the given module path to the list of profile targets.
-        """
+        """Add the given module path to the list of profile targets."""
         self.target_paths.append(path)
 
         logger.info(
-            "ModuleProfiler: added path %s to list of profile targets (request=%s)", path, request
+            "ModuleProfiler: Added path %s to list of profile targets (request=%s).", path, request
         )
 
     @functools.lru_cache(maxsize=2048)
     def is_target_path(self, path):
-        """
-        Returns whether the given path matches one of our modules to be profiled.
-        """
+        """Return whether the given path matches a module being profiled."""
         for target in self.target_paths:
             if os.path.isdir(target) and path.startswith(target + os.path.sep):
                 return True
@@ -267,18 +267,14 @@ class ModuleProfiler:
         return False
 
     def start(self):
-        """
-        Starts the module profiler for all future threads.
-        """
+        """Start the module profiler for all future threads."""
         threading.setprofile(self.profiler)
 
     def stop(self):
-        """
-        Removes the module profiler globally and from future threads.
-        """
+        """Remove the module profiler globally and from future threads."""
         if sys.getprofile() != self.profiler:
             logger.warning(
-                "ModuleProfiler: The currently enabled profile function was not ours - unbinding anyways"
+                "ModuleProfiler: The enabled profile function was not ours, unbinding anyways…"
             )
         threading.setprofile(None)
         sys.setprofile(None)
@@ -290,7 +286,7 @@ class ModuleProfiler:
 
         if not self.is_target_path(filename):
             if tid not in self.nontarget_depths:
-                # Pick up where the main thread left off
+                # Pick up where the main thread left off.
                 self.nontarget_depths[tid] = self.nontarget_depths.get(
                     threading.main_thread().ident, 1
                 )
@@ -303,7 +299,7 @@ class ModuleProfiler:
 
         if event == "call":
             if self.nontarget_depths[tid] > self.MAX_NONTARGET_DEPTH:
-                # Don't log past our max depth for packages that we're not tracking
+                # Don't log past our max depth for packages we're not tracking.
                 return
             else:
                 # In order: function name, line number, filename
@@ -384,19 +380,33 @@ class Util:
     def is_image(filename, check_contents=False):
         ext = os.path.splitext(filename)[1].lower()
 
-        if ext == '.webp' and 'webp' not in _PIXBUF_SUPPORTED_FORMATS:
-            logger.warning(lambda: "Skipping %s - install webp-pixbuf-loader for WebP support" % filename)
+        if ext == ".webp" and "webp" not in _PIXBUF_SUPPORTED_FORMATS:
+            logger.warning(
+                lambda: "Skipping %s; install webp-pixbuf-loader for WebP support." % filename
+            )
             return False
 
-        if ext == '.avif' and 'avif' not in _PIXBUF_SUPPORTED_FORMATS:
-            logger.warning(lambda: "Skipping %s - install libavif-pixbuf-loader for AVIF support" % filename)
+        if ext == ".avif" and "avif" not in _PIXBUF_SUPPORTED_FORMATS:
+            logger.warning(
+                lambda: "Skipping %s; install libavif-pixbuf-loader for AVIF support." % filename
+            )
             return False
 
         if Util.is_animated_gif(filename):
             return False
 
         if not check_contents:
-            return ext in (".jpg", ".jpeg", ".gif", ".png", ".tiff", ".svg", ".bmp", ".avif", ".webp")
+            return ext in (
+                ".avif",
+                ".bmp",
+                ".gif",
+                ".jpeg",
+                ".jpg",
+                ".png",
+                ".svg",
+                ".tiff",
+                ".webp",
+            )
         else:
             format, image_width, image_height = GdkPixbuf.Pixbuf.get_file_info(filename)
             return bool(format)
@@ -424,7 +434,7 @@ class Util:
         count = 0
         for filepath in files:
             logger.debug(
-                lambda: "checking file %s against filter_func %s" % (filepath, filter_func)
+                lambda: "Checking file %s against filter_func %s" % (filepath, filter_func)
             )
             if filter_func(filepath) and os.access(filepath, os.R_OK):
                 count += 1
@@ -447,7 +457,7 @@ class Util:
                         random.shuffle(subfolders)
                     for filename in files[:subfolder_quota]:
                         logger.debug(
-                            lambda: "checking file %s against filter_func %s (root=%s)"
+                            lambda: "Checking file %s against filter_func %s (root=%s)"
                             % (filename, filter_func, root)
                         )
                         path = os.path.join(root, filename)
@@ -472,7 +482,7 @@ class Util:
     def start_force_exit_thread(delay):
         def force_exit():
             time.sleep(delay)
-            print("Exiting takes too long. Calling os.kill.")
+            print("Exiting is taking too long; calling os.kill.")
             os.kill(os.getpid(), 9)
 
         force_exit_thread = threading.Thread(target=force_exit)
@@ -509,7 +519,7 @@ class Util:
             m.save_file()
             return True
         except Exception as ex:
-            # could not write metadata inside file, use json instead
+            # Could not write metadata inside file, using JSON instead.
             logger.exception(
                 lambda: "Could not write metadata directly in file, trying json metadata: "
                 + filename
@@ -577,7 +587,7 @@ class Util:
             return info
 
         except Exception as e:
-            # could not read metadata inside file, try reading json metadata instead
+            # Couldn't read metadata inside file, try reading JSON metadata instead.
             try:
                 with open(filename + ".metadata.json", encoding="utf8") as f:
                     return json.loads(f.read())
@@ -664,7 +674,7 @@ class Util:
     @staticmethod
     def request(url, data=None, stream=False, method=None, timeout=30, headers=None):
         if not Util.internet_enabled:
-            raise InternetDisabledError("Internet access in Variety is currently disabled")
+            raise InternetDisabledError("Internet access in Variety is currently disabled.")
 
         logger.debug("Request URL: %s" % url)
 
@@ -728,9 +738,12 @@ class Util:
 
     @staticmethod
     def compute_trimmed_offsets(image_size, screen_size):
-        """Computes what width or height of the wallpaper image will be trimmed on each side, as it is zoomed in to fill
-        the whole screen. Returns a tuple (h, v, scale_ratio) in which h or v will be zero. The other one is the pixel
-        width or height that will be trimmed on each one of the sides of the image (top and down or left and right)."""
+        """Compute the portion of width/height of image to be trimmed.
+
+        As the image is zoomed in to fill the whole screen, calculate the length on both sides of
+        the major axis to trim. Returns a tuple (h, v, scale_ratio) in which h or v will be zero.
+        The other one is the pixel width/height to be trimmed on one of the axes of the image.
+        """
         iw, ih = image_size
         screen_w, screen_h = screen_size
         screen_ratio = float(screen_w) / screen_h
@@ -754,15 +767,18 @@ class Util:
 
     @staticmethod
     def get_scaled_size(image):
-        """Computes the size to which the image is scaled to fit the screen: original_size * scale_ratio = scaled_size"""
+        """Compute size the image is scaled to to fit the screen.
+
+        original_size * scale_ratio = scaled_size
+        """
         iw, ih = Util.get_size(image)
         screen_w, screen_h = Util.get_primary_display_size()
         screen_ratio = float(screen_w) / screen_h
         if (
             screen_ratio > float(iw) / ih
-        ):  # image is "taller" than the screen ratio - need to offset vertically
+        ):  # Image is "taller" than display ratio, need to trim vertically
             return screen_w, int(round(ih * float(screen_w) / iw))
-        else:  # image is "wider" than the screen ratio - need to offset horizontally
+        else:  # image is "wider" than display ratio - need to trim horizontally
             return int(round(iw * float(screen_h) / ih)), screen_h
 
     @staticmethod
@@ -838,11 +854,11 @@ class Util:
         try:
             pics_folder = GLib.get_user_special_dir(GLib.USER_DIRECTORY_PICTURES)
             if not pics_folder:
-                raise Exception("Could not get path to Pictures folder. Defaulting to ~/Pictures.")
+                raise Exception("Could not get path to Pictures folder; defaulting to ~/Pictures.")
             return pics_folder
         except:
             logger.exception(
-                lambda: "Could not get path to Pictures folder. Defaulting to ~/Pictures."
+                lambda: "Could not get path to Pictures folder; defaulting to ~/Pictures."
             )
             return os.path.expanduser("~/Pictures")
 
@@ -895,7 +911,7 @@ class Util:
         except:
             return False
 
-    # makes the Gtk thread execute the given callback.
+    # Makes the Gtk thread execute the given callback.
     @staticmethod
     def add_mainloop_task(callback, *args):
         def cb(args):
@@ -969,18 +985,20 @@ def on_gtk(f):
 
 
 def safe_print(text, ascii_text=None, file=sys.stdout):
-    """
-    Python's print throws UnicodeEncodeError if the terminal encoding is borked. This version tries print, then logging, then printing the ascii text when one is present.
-    If does not throw exceptions even if it fails.
+    """Try print, then logging, then printing the ASCII text, when present.
+
+    Python's print throws UnicodeEncodeError if the terminal encoding is borked.
     :param text: Text to print, str or unicode, possibly with non-ascii symbols in it
     :param ascii_text: optional. Original untranslated ascii version of the text when present.
     """
     try:
         print(text, file=file)
-    except:  # UnicodeEncodeError can happen here if the terminal is strangely configured, but we are playing safe and catching everything
+    # UnicodeEncodeError can happen here if the terminal is strangely configured, but we are
+    # playing safe and catching everything.
+    except:
         try:
             logging.getLogger("variety").error(
-                "Error printing non-ascii text, terminal encoding is %s" % sys.stdout.encoding
+                "Error printing non-ASCII text, terminal encoding is %s" % sys.stdout.encoding
             )
             if ascii_text:
                 try:

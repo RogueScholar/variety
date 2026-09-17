@@ -1,18 +1,21 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2019, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2023, Emile-Durkheim <Emile-Durkheim@users.noreply.github.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import logging
 import random
 import time
@@ -57,7 +60,7 @@ class UnsplashDownloader(SimpleDownloader):
         return "Unsplash.com"
 
     def get_source_location(self):
-        return "https://unsplash.com"
+        return "https://unsplash.com/"
 
     def get_folder_name(self):
         return "Unsplash"
@@ -77,7 +80,7 @@ class UnsplashDownloader(SimpleDownloader):
     def fill_queue(self):
         if time.time() - UnsplashDownloader.rate_limiting_started_time < 3600:
             logger.info(
-                lambda: "Unsplash queue empty, but rate limit reached, will try again later"
+                lambda: "Unsplash queue empty, but rate limit reached; will try again later."
             )
             return []
 
@@ -100,8 +103,8 @@ class UnsplashDownloader(SimpleDownloader):
                     max(1980, int(Util.get_primary_display_size()[0] * 1.2))
                 )
                 origin_url = item["links"]["html"] + UnsplashDownloader.UTM_PARAMS
-                
-                if "plus.unsplash.com/" in image_url:  # exclude watermarked wallpapers
+
+                if "plus.unsplash.com/" in image_url:  # Exclude watermarked wallpapers
                     continue
 
                 extra_metadata = {
@@ -123,7 +126,7 @@ class UnsplashDownloader(SimpleDownloader):
 
                 queue.append((origin_url, image_url, extra_metadata))
             except:
-                logger.exception(lambda: "Could not process an item from Unsplash")
+                logger.exception(lambda: "Could not process item from Unsplash.")
                 raise
 
         random.shuffle(queue)

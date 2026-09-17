@@ -1,18 +1,21 @@
 #!/usr/bin/python3
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2018, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2026, Rob Keys <rob_keys@outlook.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
 import os
@@ -24,26 +27,30 @@ from variety.plugins.builtin.downloaders.RedditDownloader import RedditDownloade
 from variety.plugins.builtin.downloaders.RedditSource import RedditSource
 
 
-@unittest.skipIf(os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)")
+@unittest.skipIf(
+    os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)"
+)
 class TestRedditDownloader(unittest.TestCase):
     def test_download_one(self):
         source = RedditSource()
-        test_download_one_for(self, source.create_downloader("http://www.reddit.com/r/AutumnPorn/"))
+        test_download_one_for(
+            self, source.create_downloader("https://www.reddit.com/r/AutumnPorn/")
+        )
 
     def test_build_json_url(self):
         self.assertEqual(
-            "http://www.reddit.com/r/comics/.json?limit=100",
-            RedditDownloader.build_json_url("http://www.reddit.com/r/comics/"),
+            "https://www.reddit.com/r/comics/best.json?limit=100&raw_json=1",
+            RedditDownloader.build_json_url("https://www.reddit.com/r/comics/best/"),
         )
 
         self.assertEqual(
-            "http://www.reddit.com/r/comics/top/.json?limit=100",
-            RedditDownloader.build_json_url("http://www.reddit.com/r/comics/top/"),
+            "https://www.reddit.com/r/comics/top.json?limit=100&raw_json=1",
+            RedditDownloader.build_json_url("https://www.reddit.com/r/comics/top/"),
         )
 
         self.assertEqual(
-            "http://www.reddit.com/r/comics/top/.json?sort=top&t=week&limit=100",
-            RedditDownloader.build_json_url("http://www.reddit.com/r/comics/top/?sort=top&t=week"),
+            "https://www.reddit.com/r/comics/top.json?sort=top&t=week&limit=100&raw_json=1",
+            RedditDownloader.build_json_url("https://www.reddit.com/r/comics/top/?sort=top&t=week"),
         )
 
     def test_validate(self):
@@ -56,18 +63,18 @@ class TestRedditDownloader(unittest.TestCase):
         def _validate(url):
             return source.validate(url)[1] is None
 
-        self.assertTrue(_validate("http://www.reddit.com/r/comics"))
-        self.assertFalse(_validate("http://www.reddit.com/r/nsfw/"))
+        self.assertTrue(_validate("https://www.reddit.com/r/comics/"))
+        self.assertFalse(_validate("https://www.reddit.com/r/nsfw/"))
 
         parent.options.safe_mode = False
-        self.assertTrue(_validate("http://www.reddit.com/r/comics"))
-        self.assertTrue(_validate("http://www.reddit.com/r/nsfw/"))
+        self.assertTrue(_validate("https://www.reddit.com/r/comics/"))
+        self.assertTrue(_validate("https://www.reddit.com/r/nsfw/"))
 
-        self.assertTrue(_validate("http://www.reddit.com/r/AutumnPorn/"))
-        self.assertTrue(_validate("http://www.reddit.com/r/AutumnPorn/top?sort=top&t=month"))
-        self.assertFalse(_validate("http://www.reddit.com/r/bestof/"))
-        self.assertFalse(_validate("http://www.reddit.com/r/dhkjregfhjregfjfdrejh/"))
-        self.assertFalse(_validate("http://www.notreddit.com/r/dhkjregfhjregfjfdrejh/"))
+        self.assertTrue(_validate("https://www.reddit.com/r/AutumnPorn/"))
+        self.assertTrue(_validate("https://www.reddit.com/r/AutumnPorn/top/?sort=top&t=month"))
+        self.assertFalse(_validate("https://www.reddit.com/r/bestof/"))
+        self.assertFalse(_validate("https://www.reddit.com/r/dhkjregfhjregfjfdrejh/"))
+        self.assertFalse(_validate("https://www.notreddit.com/r/dhkjregfhjregfjfdrejh/"))
 
 
 if __name__ == "__main__":

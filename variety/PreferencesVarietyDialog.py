@@ -407,12 +407,14 @@ class PreferencesVarietyDialog(PreferencesDialog):
         add_menu = Gtk.Menu()
 
         items = [
+            # fmt: off
             (
                 False,
                 _("Images"),
                 _("Add individual wallpaper images"),
                 self.on_add_images_clicked
             ),
+            # fmt: on
             (
                 False,
                 _("Folders"),
@@ -642,17 +644,11 @@ class PreferencesVarietyDialog(PreferencesDialog):
 
     def on_add_folders_clicked(self, widget=None, source_type=Options.SourceType.FOLDER):
         if source_type == Options.SourceType.FOLDER:
-            title = _(
-                "Add top-level folders (searched recursively)"
-            )
+            title = _("Add top-level folders (searched recursively)")
         elif source_type == Options.SourceType.ALBUM_FILENAME:
-            title = _(
-                "Add sequential albums, sorted by filename (searched recursively)"
-            )
+            title = _("Add sequential albums, sorted by filename (searched recursively)")
         elif source_type == Options.SourceType.ALBUM_DATE:
-            title = _(
-                "Add sequential albums, sorted by date (searched recursively)"
-            )
+            title = _("Add sequential albums, sorted by date (searched recursively)")
         else:
             raise Exception("Unsuppoted source_type {}".format(source_type))
         chooser = Gtk.FileChooserDialog(

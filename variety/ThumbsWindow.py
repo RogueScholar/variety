@@ -1,17 +1,20 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2017–2018, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2023, Ryan Bloomfield <sir-maniac@users.noreply.github.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
 import logging
@@ -186,7 +189,7 @@ class ThumbsWindow(Gtk.Window):
                 pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(file, self.breadth, 10000)
         except Exception:
             logger.warning(
-                lambda: "Could not create thumbnail for file %s. File may be missing or invalid."
+                lambda: "Could not create thumbnail for file %s; file may be missing or invalid."
                 % file
             )
             pixbuf = None
@@ -195,9 +198,7 @@ class ThumbsWindow(Gtk.Window):
             image_size = (
                 0
                 if not pixbuf
-                else pixbuf.get_width()
-                if self.is_horizontal()
-                else pixbuf.get_height()
+                else pixbuf.get_width() if self.is_horizontal() else pixbuf.get_height()
             )
 
             thumb = Gtk.Image()
@@ -249,7 +250,7 @@ class ThumbsWindow(Gtk.Window):
 
             if at_front:
                 self.box.reorder_child(eventbox, 0)
-                # get adj again - we just added at front, scrollbar might have appeared
+                # Get adj again, we just added at front and scrollbar may have appeared.
                 adj = (
                     self.scroll.get_hadjustment()
                     if self.is_horizontal()
@@ -301,7 +302,8 @@ class ThumbsWindow(Gtk.Window):
             else:
                 self.scroll.set_min_content_height(min(self.total_width, self.monitor_area.height))
 
-    # TODO this method is buggy when width < screen and scrollbar not shown - a blank space remains
+    # TODO: This method is buggy when width < screen & scrollbar isn't shown, a blank space remains.
+    # <PL 2012-08-09>
     @on_gtk
     def remove_image(self, image):
         for info in self.all:

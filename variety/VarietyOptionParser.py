@@ -48,19 +48,15 @@ class VarietyOptionParser(optparse.OptionParser):
 
 def parse_options(arguments, report_errors=True):
     """Define supported command line options."""
-    usage = _(
-        """%prog [options] [files or URLs]
+    usage = _("""%prog [options] [files or URLs]
 
         Passing local files will add them to Variety's queue, while remote URLs
         will be populated to the Fetched folder and placed in the queue.
         To set a specific wallpaper: %prog --set /path/to/image.jpg
-        """
-    )
+        """)
 
     parser = VarietyOptionParser(
-        version="%%prog %s" % varietyconfig.get_version(),
-        usage=usage,
-        report_errors=report_errors
+        version="%%prog %s" % varietyconfig.get_version(), usage=usage, report_errors=report_errors
     )
 
     parser.add_option(
@@ -79,7 +75,7 @@ def parse_options(arguments, report_errors=True):
             "multiple screens or workspaces under desktop environments which allow this, like "
             "XFCE. To pass commands to a running instance, pass the same --profile argument in "
             "subsequent commands as the one it was started with."
-        )
+        ),
     )
 
     parser.add_option(
@@ -91,15 +87,11 @@ def parse_options(arguments, report_errors=True):
         help=_(
             "Show logging messages with a variable level of specificity; flag may be repeated up "
             "to four additional times, each increasing the amount of detail reported."
-        )
+        ),
     )
 
     parser.add_option(
-        "-q",
-        "--quit",
-        action="store_true",
-        dest="quit",
-        help=_("Quit the running instance.")
+        "-q", "--quit", action="store_true", dest="quit", help=_("Quit the running instance.")
     )
 
     parser.add_option(
@@ -109,14 +101,14 @@ def parse_options(arguments, report_errors=True):
         "--show-current",
         action="store_true",
         dest="show_current",
-        help=_("Print the current wallpaper filename and path from a running instance of Variety.")
+        help=_("Print the current wallpaper filename and path from a running instance of Variety."),
     )
 
     parser.add_option(
         "--meta",
         action="store_true",
         dest="show_meta",
-        help=_("Print the current wallpaper metadata from a running instance of Variety.")
+        help=_("Print the current wallpaper metadata from a running instance of Variety."),
     )
 
     parser.add_option(
@@ -124,7 +116,7 @@ def parse_options(arguments, report_errors=True):
         "--set-wallpaper",
         action="store",
         dest="set_wallpaper",
-        help=_("Set the given file as wallpaper; requires an absolute path as the value.")
+        help=_("Set the given file as wallpaper; requires an absolute path as the value."),
     )
 
     parser.add_option(
@@ -132,7 +124,7 @@ def parse_options(arguments, report_errors=True):
         "--next",
         action="store_true",
         dest="next",
-        help=_("Skip to the next wallpaper in the queue.")
+        help=_("Skip to the next wallpaper in the queue."),
     )
 
     parser.add_option(
@@ -140,7 +132,7 @@ def parse_options(arguments, report_errors=True):
         "--previous",
         action="store_true",
         dest="previous",
-        help=_("Return to the most recent previous wallpaper from the queue.")
+        help=_("Return to the most recent previous wallpaper from the queue."),
     )
 
     parser.add_option(
@@ -149,7 +141,7 @@ def parse_options(arguments, report_errors=True):
         dest="fast_forward",
         help=_(
             "Skip ahead to the first unused wallpaper in the queue, bypassing the forward history."
-        )
+        ),
     )
 
     parser.add_option(
@@ -157,7 +149,7 @@ def parse_options(arguments, report_errors=True):
         "--trash",
         action="store_true",
         dest="trash",
-        help=_("Move the current wallpaper to the Trash; image must have been set by Variety.")
+        help=_("Move the current wallpaper to the Trash; image must have been set by Variety."),
     )
 
     parser.add_option(
@@ -165,91 +157,91 @@ def parse_options(arguments, report_errors=True):
         "--favorite",
         action="store_true",
         dest="favorite",
-        help=_("Copy the current wallpaper to Favorites; image must have been set by Variety.")
+        help=_("Copy the current wallpaper to Favorites; image must have been set by Variety."),
     )
 
     parser.add_option(
         "--move-to-favorites",
         action="store_true",
         dest="movefavorite",
-        help=_("Move the current wallpaper to Favorites; image must have been set by Variety.")
+        help=_("Move the current wallpaper to Favorites; image must have been set by Variety."),
     )
 
     parser.add_option(
         "--pause",
         action="store_true",
         dest="pause",
-        help=_("Pause further wallpaper changes and remain on current image.")
+        help=_("Pause further wallpaper changes and remain on current image."),
     )
 
     parser.add_option(
         "--resume",
         action="store_true",
         dest="resume",
-        help=_("Resume configured wallpaper change schedule.")
+        help=_("Resume configured wallpaper change schedule."),
     )
 
     parser.add_option(
         "--toggle-pause",
         action="store_true",
         dest="toggle_pause",
-        help=_("Reverse the current pause state of wallpaper changes.")
+        help=_("Reverse the current pause state of wallpaper changes."),
     )
 
     parser.add_option(
         "--toggle-no-effects",
         action="store_true",
         dest="toggle_no_effects",
-        help=_("Reverse the current image effects state for the current wallpaper.")
+        help=_("Reverse the current image effects state for the current wallpaper."),
     )
 
     parser.add_option(
         "--quotes-next",
         action="store_true",
         dest="quotes_next",
-        help=_("Skip to the next quote in the queue.")
+        help=_("Skip to the next quote in the queue."),
     )
 
     parser.add_option(
         "--quotes-previous",
         action="store_true",
         dest="quotes_previous",
-        help=_("Return to the most recent previous quote from the queue.")
+        help=_("Return to the most recent previous quote from the queue."),
     )
 
     parser.add_option(
         "--quotes-fast-forward",
         action="store_true",
         dest="quotes_fast_forward",
-        help=_("Skip ahead to the first unused quote in the queue, bypassing the forward history.")
+        help=_("Skip ahead to the first unused quote in the queue, bypassing the forward history."),
     )
 
     parser.add_option(
         "--quotes-toggle-pause",
         action="store_true",
         dest="quotes_toggle_pause",
-        help=_("Reverse the activation state for showing quotes on the desktop.")
+        help=_("Reverse the activation state for showing quotes on the desktop."),
     )
 
     parser.add_option(
         "--quotes-save-favorite",
         action="store_true",
         dest="quotes_save_favorite",
-        help=_("Save the current quote to Favorites.")
+        help=_("Save the current quote to Favorites."),
     )
 
     parser.add_option(
         "--history",
         action="store_true",
         dest="history",
-        help=_("Show/Hide the wallpaper history ribbon.")
+        help=_("Show/Hide the wallpaper history ribbon."),
     )
 
     parser.add_option(
         "--downloads",
         action="store_true",
         dest="downloads",
-        help=_("Show/Hide the recent downloads ribbon.")
+        help=_("Show/Hide the recent downloads ribbon."),
     )
 
     parser.add_option(
@@ -257,7 +249,7 @@ def parse_options(arguments, report_errors=True):
         "--show-preferences",
         action="store_true",
         dest="preferences",
-        help=_("Open the Variety configuration panel.")
+        help=_("Open the Variety configuration panel."),
     )
 
     parser.add_option(
@@ -268,7 +260,7 @@ def parse_options(arguments, report_errors=True):
         help=_(
             "Show the manual selection ribbon with thumbnails of all images from the active "
             "sources."
-        )
+        ),
     )
 
     parser.add_option(
@@ -283,16 +275,16 @@ def parse_options(arguments, report_errors=True):
             "multiple options in a single command, for example: "
             "'variety --set-option icon Dark --set-option clock_enabled True'. USE WITH CAUTION: "
             "Configuration options can be assigned invalid values when using this flag."
-        )
+        ),
     )
 
     options, args = parser.parse_args(arguments)
 
     if report_errors:
         if (options.next or options.fast_forward) and options.previous:
-            parser.error(_(
-                "The --next, --fast-forward and --previous flags are mutually exclusive."
-            ))
+            parser.error(
+                _("The --next, --fast-forward and --previous flags are mutually exclusive.")
+            )
 
         if options.trash and options.favorite:
             parser.error(_("The --trash and --favorite flags are mutually exclusive."))
@@ -301,9 +293,11 @@ def parse_options(arguments, report_errors=True):
             parser.error(_("The --pause and --resume flags are mutually exclusive."))
 
         if (options.quotes_next or options.quotes_fast_forward) and options.quotes_previous:
-            parser.error(_(
-                "The --quotes-next, --quotes-fast-forward and --quotes-previous flags are "
-                "mutually exclusive."
-            ))
+            parser.error(
+                _(
+                    "The --quotes-next, --quotes-fast-forward and --quotes-previous flags are "
+                    "mutually exclusive."
+                )
+            )
 
     return options, args

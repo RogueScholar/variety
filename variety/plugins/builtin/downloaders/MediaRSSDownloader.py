@@ -1,17 +1,19 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2017–2019, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
 import logging
@@ -53,7 +55,7 @@ class MediaRSSDownloader(DefaultDownloader):
 
     @staticmethod
     def validate(url):
-        logger.info(lambda: "Validating MediaRSS url " + url)
+        logger.info(lambda: "Validating MediaRSS URL " + url)
         try:
             if not url.startswith("http://") and not url.startswith("https://"):
                 url = "https://" + url
@@ -66,7 +68,7 @@ class MediaRSSDownloader(DefaultDownloader):
             ]
             return len(walls) > 0
         except Exception:
-            logger.exception(lambda: "Error while validating URL, probably not a MediaRSS feed")
+            logger.exception(lambda: "Error while validating URL, probably not a MediaRSS feed.")
             return False
 
     def download_queue_item(self, queue_item):
@@ -96,14 +98,13 @@ class MediaRSSDownloader(DefaultDownloader):
                 content = None
                 width = -1
                 if group is not None:
-                    # find the largest image in the group
+                    # Find the largest image in the group
                     for c in group.findall("{0}content".format(MEDIA_NS)):
                         try:
                             if MediaRSSDownloader.is_valid_content(c):
                                 if content is None:
-                                    content = (
-                                        c
-                                    )  # use the first one, in case we don't find any width info
+                                    # Use the first one, in case we don't find any width info
+                                    content = c
                                 if "width" in c.attrib and int(c.attrib["width"]) > width:
                                     content = c
                                     width = int(c.attrib["width"])
@@ -183,7 +184,7 @@ class MediaRSSDownloader(DefaultDownloader):
                     extra_metadata,
                 )
             except Exception:
-                logger.exception(lambda: "Could not process an item in the Media RSS feed")
+                logger.exception(lambda: "Could not process an item in the Media RSS feed.")
 
         random.shuffle(queue)
         return queue
@@ -202,17 +203,17 @@ class MediaRSSDownloader(DefaultDownloader):
             logger.debug(lambda: "Checking origin_url " + origin_url)
 
             if self.is_in_banned(origin_url):
-                logger.debug(lambda: "In banned, skipping")
+                logger.debug(lambda: "In banned list; skipping…")
                 return
 
             image_file_url = content.attrib["url"]
 
             if self.is_in_downloaded(image_file_url):
-                logger.debug(lambda: "Already in downloaded")
+                logger.debug(lambda: "Already in Downloaded folder.")
                 return
 
             if self.is_in_favorites(image_file_url):
-                logger.debug(lambda: "Already in favorites")
+                logger.debug(lambda: "Already in Favorites folder.")
                 return
 
             width = None
@@ -224,7 +225,7 @@ class MediaRSSDownloader(DefaultDownloader):
                 pass
 
             if self.is_size_inadequate(width, height):
-                logger.debug(lambda: "Small or non-landscape size/resolution")
+                logger.debug(lambda: "Small size or non-landscape orientation.")
                 return
 
             logger.debug(

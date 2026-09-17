@@ -1,17 +1,18 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2019, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2018, James Lu <james@overdrivenetworks.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
 from gi.repository import Gtk  # pylint: disable=E0611
@@ -23,9 +24,8 @@ class WelcomeDialog(Gtk.Dialog):
     __gtype_name__ = "WelcomeDialog"
 
     def __new__(cls):
-        """Special static method that's automatically called by Python when 
-        constructing a new instance of this class.
-        
+        """Static method called when constructing a new instance of this class.
+
         Returns a fully instantiated WelcomeDialog object.
         """
         builder = get_builder("WelcomeDialog")
@@ -34,12 +34,11 @@ class WelcomeDialog(Gtk.Dialog):
         return new_object
 
     def finish_initializing(self, builder):
-        """Called when we're finished initializing.
+        """Call when finished initializing.
 
-        finish_initalizing should be called after parsing the ui definition
-        and creating a WelcomeDialog object with it in order to
-        finish initializing the start of the new WelcomeDialog
-        instance.
+        finish_initalizing should be called after parsing the UI definition and
+        creating a WelcomeDialog object with it to finish initializing the
+        start of the new WelcomeDialog instance.
         """
         # Get a reference to the builder and set up the signals.
         self.builder = builder

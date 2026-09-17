@@ -1,18 +1,24 @@
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2017–2025, James Lu <james@overdrivenetworks.com>
+# SPDX-FileCopyrightText: © 2018, Brandon Jiang <Brandon.jiang.a@outlook.com>
+# SPDX-FileCopyrightText: © 2021, Kylie <EvilDrPurple@users.noreply.github.com>
+# SPDX-FileCopyrightText: © 2025, François Thierry M. Marelli <francois.marelli@umons.ac.be>
+# SPDX-FileCopyrightText: © 2026, Diego Alvarez <dp-alvarez@users.noreply.github.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
+
 import hashlib
 import logging
 import os
@@ -29,11 +35,13 @@ TRUTH_VALUES = ["enabled", "1", "true", "on", "yes"]
 
 
 class Options:
-    OUTDATED_HASHES = {"clock_filter": ["dca6bd2dfa2b8c4e2db8801e39208f7f", "a565a0c34a1358af4fb040d30cca6933"]}
-    SIMPLE_DOWNLOADERS = []  # set by VarietyWindow at start
-    IMAGE_SOURCES = []  # set by VarietyWindow at start
-    CONFIGURABLE_IMAGE_SOURCES = []  # set by VarietyWindow at start
-    CONFIGURABLE_IMAGE_SOURCES_MAP = {}  # set by VarietyWindow at start
+    OUTDATED_HASHES = {
+        "clock_filter": ["dca6bd2dfa2b8c4e2db8801e39208f7f", "a565a0c34a1358af4fb040d30cca6933"]
+    }
+    SIMPLE_DOWNLOADERS = []  # Set by VarietyWindow at start
+    IMAGE_SOURCES = []  # Set by VarietyWindow at start
+    CONFIGURABLE_IMAGE_SOURCES = []  # Set by VarietyWindow at start
+    CONFIGURABLE_IMAGE_SOURCES_MAP = {}  # Set by VarietyWindow at start
 
     class SourceType:
         # local files and folders
@@ -523,7 +531,7 @@ class Options:
                         logger.debug(lambda: "Cannot parse source: " + v, exc_info=True)
                         logger.info("Ignoring no longer supported source %s", v)
 
-            # automatically append sources for all simple downloaders we have
+            # Automatically append sources for all simple downloaders we have
             source_types = set(s[1] for s in self.sources)
             for downloader in sorted(self.SIMPLE_DOWNLOADERS, key=lambda dl: dl.get_source_type()):
                 if downloader.get_source_type() not in source_types:
@@ -557,7 +565,7 @@ class Options:
             if key in config:
                 current_hash = hashlib.md5(config[key].encode()).hexdigest()
                 if current_hash in outdated_hashes:
-                    # entry is outdated: delete it and use the default
+                    # Entry is outdated: delete it and use the default.
                     logger.warning(
                         lambda: "Option " + key + " has an outdated value, using the new default"
                     )
@@ -594,7 +602,7 @@ class Options:
                                 f[2] = s[2]
                                 break
                         else:
-                            # not found at all in filters, append it
+                            # Not found at all in filters, append it.
                             self.filters.append(s)
                     except Exception:
                         logger.exception(lambda: "Cannot parse filter in filters.txt: " + line)

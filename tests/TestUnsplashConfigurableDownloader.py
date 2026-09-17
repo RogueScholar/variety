@@ -1,18 +1,19 @@
 #!/usr/bin/python3
 # -*- Mode: Python; coding: utf-8; indent-tabs-mode: nil; tab-width: 4 -*-
+# SPDX-FileCopyrightText: © 2012–2022, Peter Levi <peterlevi@peterlevi.com>
+# SPDX-FileCopyrightText: © 2026, Rob Keys <rob_keys@outlook.com>
+# SPDX-License-Identifier: GPL-3.0-only
 ### BEGIN LICENSE
-# Copyright (c) 2012, Peter Levi <peterlevi@peterlevi.com>
-# This program is free software: you can redistribute it and/or modify it
-# under the terms of the GNU General Public License version 3, as published
-# by the Free Software Foundation.
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, version 3.
 #
-# This program is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranties of
-# MERCHANTABILITY, SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR
-# PURPOSE.  See the GNU General Public License for more details.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License along
-# with this program.  If not, see <http://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU General Public License along with
+# this program. If not, see <https://www.gnu.org/licenses/>.
 ### END LICENSE
 
 import os
@@ -25,7 +26,9 @@ from variety.plugins.builtin.downloaders.UnsplashConfigurableSource import (
 )
 
 
-@unittest.skipIf(os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)")
+@unittest.skipIf(
+    os.getenv("SKIP_DOWNLOADER_TESTS"), "Skipping downloader tests (SKIP_DOWNLOADER_TESTS is set)"
+)
 class TestUnsplashConfigurableDownloader(unittest.TestCase):
     def _source(self):
         parent = AttrDict()
@@ -43,7 +46,7 @@ class TestUnsplashConfigurableDownloader(unittest.TestCase):
         self.assertIsNone(source.validate("https://unsplash.com/s/photos/landscape")[1])
         self.assertIsNone(source.validate("https://unsplash.com/@pawel_czerwinski")[1])
         self.assertIsNone(
-            source.validate("https://unsplash.com/collections/3694365/gradient-nation")[1]
+            source.validate("https://unsplash.com/collections/3694365/Gradient-Nation")[1]
         )
 
     def test_fill_queue(self):
